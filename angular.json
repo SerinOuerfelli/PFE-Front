@@ -12,25 +12,19 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
-          "options": {
+         "options": {
             "outputPath": "dist/biat-smartmonitor",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+              "src/favicon.ico",
+              "src/assets"
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": []
-          },
+},
           "configurations": {
             "production": {
               "budgets": [
@@ -92,5 +86,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

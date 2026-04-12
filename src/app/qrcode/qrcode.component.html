@@ -1,0 +1,25 @@
+<div class="auth-container">
+  <!-- Left QR section -->
+  <div class="welcome-section">
+    <qrcode [qrdata]="qrData" [width]="250" [errorCorrectionLevel]="'M'"></qrcode>
+    
+  </div>
+
+  <!-- Right verification section -->
+  <div class="form-section">
+    <div class="box">
+      <h2>Enter Verification Code</h2>
+
+      <div class="code-inputs">
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[0]" (input)="moveFocus($event,0)" autofocus />
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[1]" (input)="moveFocus($event,1)" />
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[2]" (input)="moveFocus($event,2)" />
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[3]" (input)="moveFocus($event,3)" />
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[4]" (input)="moveFocus($event,4)" />
+        <input type="text" maxlength="1" [(ngModel)]="codeDigits[5]" (input)="moveFocus($event,5)" />
+      </div>
+
+      <button (click)="verify()">Verify</button>
+    </div>
+  </div>
+</div>

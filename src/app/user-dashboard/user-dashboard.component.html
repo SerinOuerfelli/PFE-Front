@@ -1,0 +1,56 @@
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- HEADER -->
+    <div class="sidebar-header">
+      <img src="assets/biatlogo.png" alt="BIAT Logo">
+      <div class="header-text">
+        <h3>BIAT IT</h3>
+        <p class="tagline">Smart Monitoring</p>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+    <p class="section-title">Navigation</p>
+    <!-- MENU -->
+    <ul class="menu">
+      <li (click)="setActive('My Dashboard'); loadContent('useroverview')" 
+          [class.active]="activeItem === 'My Dashboard'">
+        <i class="fas fa-home icon"></i>Dashboard 
+      </li>
+
+      
+
+      
+
+      <li [class.active]="activeItem === 'Settings'" (click)="setActive('Settings')">
+        <i class="fas fa-cog icon"></i> ChatBot
+      </li>
+    </ul>
+<!-- Bottom section -->
+<div class="sidebar-bottom">
+  <hr class="sidebar-dividers">
+  <p class="section-title">User Account</p>
+  <!-- User info block -->
+  <div class="user-info">
+    <div class="avatar">{{ username?.charAt(0) }}</div>
+    <div class="user-text">
+      <p class="user-name">{{ username }}</p>
+      <p class="user-email">{{ email }}</p>
+    </div>
+  </div><br>
+  <hr class="sidebar-dividers">
+      <button class="logout-btn" (click)="logout()">Logout</button>
+</div>
+
+  </div>
+
+    <!-- Main content directly under topbar -->
+    <div class="main-content">
+      <app-useroverview *ngIf="currentContent === 'useroverview'"></app-useroverview>
+      <app-analytics *ngIf="currentContent === 'analytics'"></app-analytics>
+      <app-rapports *ngIf="currentContent === 'rapports'"></app-rapports>
+    </div>
+  
+</body>

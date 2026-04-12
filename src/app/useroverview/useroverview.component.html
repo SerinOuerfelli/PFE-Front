@@ -1,0 +1,64 @@
+<div class="dashboard">
+  <h2> KPI Dashboard Performances</h2>
+
+  <!-- Alerts box -->
+  <div class="alerts-section">
+    <h3>Alerts</h3>
+    <div class="alerts-row">
+  <div class="alert-card info">
+    <span class="label">INFORMATION</span>
+    <span class="value">{{kpis?.AlertsByLevel?.INFO}}</span>
+  </div>
+  <div class="alert-card warn">
+    <span class="label">WARNING</span>
+    <span class="value">{{kpis?.AlertsByLevel?.WARNING}}</span>
+  </div>
+  <div class="alert-card crit">
+    <span class="label">CRITICAL</span>
+    <span class="value">{{kpis?.AlertsByLevel?.CRITICAL}}</span>
+  </div>
+  <div class="alert-card error">
+    <span class="label">ERROR</span>
+    <span class="value">{{kpis?.AlertsByLevel?.ERROR}}</span>
+  </div>
+</div>
+  </div>
+
+  <!-- Left column -->
+  <div class="left-column">
+    <div class="chart-container medium">
+      <canvas id="incidentsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="right-column">
+    <div class="system-box">
+      <h3>System Rates</h3>
+      <ul>
+        <li>Failure Rate <span>{{kpis?.EquipmentFailureRate | number:'1.2-2'}}%</span></li>
+<li>Success Rate <span>{{kpis?.TransactionSuccessRate | number:'1.2-2'}}%</span></li>
+<li>Uptime Rate <span>{{kpis?.EquipmentUptimeRate | number:'1.2-2'}}%</span></li>
+<li>Critical Risk <span>{{kpis?.CriticalRiskRate | number:'1.2-2'}}%</span></li>
+<li>Fraud Suspicion <span>{{kpis?.FraudSuspicionRate | number:'1.2-2'}}%</span></li>
+<li>Normal Rate <span>{{kpis?.NormalRate | number:'1.2-2'}}%</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Recommendations box (moved out of right-column) -->
+  <div class="recommendations-section">
+    <h3>Recommendations by Priority</h3>
+    <div class="recommendations-row">
+      <div class="recommend-card high">
+  HIGH <span>{{kpis.RecommendationsByPriority.HIGH}}</span>
+</div>
+<div class="recommend-card medium">
+  MEDIUM <span>{{kpis.RecommendationsByPriority.MEDIUM}}</span>
+</div>
+<div class="recommend-card critical">
+  CRITICAL <span>{{kpis.RecommendationsByPriority.CRITICAL}}</span>
+</div>
+    </div>
+  </div>
+</div>

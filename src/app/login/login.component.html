@@ -1,0 +1,31 @@
+<div class="auth-container">
+  <!-- Logo -->
+  <div class="welcome-section" [class.slide-left]="animateOut">
+    <img src="/assets/biatit.jpg" alt="Smarty Monitoring Logo" class="logo" />
+    <p>Secure monitoring made simple.</p>
+  </div>
+
+  <!-- Login form -->
+  <div class="form-section" 
+     [ngClass]="{
+       'remove-clip': clipRemoved,
+       'add-clip': !clipRemoved,
+       'slide-right': animateOut
+     }">
+
+
+    <div class="box">
+      <h2>Login</h2>
+      <input type="text" [(ngModel)]="email" placeholder="Email" />
+      <input type="password" [(ngModel)]="password" placeholder="Password" />
+      <button (click)="login()" id="removeClipBtn">Login</button>
+      <p class="switch">
+        Don't have an account? <span (click)="switchToSignup()">Sign Up</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
+
