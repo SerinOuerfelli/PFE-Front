@@ -261,11 +261,7 @@ canvas {
 }
 
 /* Chart container */
-.night-mode .chart-container {
-  background-color: #0F172B;
-  border: 2px solid #ffffff;
-  color: #ffffff;
-}
+
 
 /* System box */
 .night-mode .system-box {
