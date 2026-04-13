@@ -233,3 +233,64 @@ canvas {
 .recommend-card.high { color: #1976d2; }
 .recommend-card.medium { color: #64b5f6; }
 .recommend-card.critical { color: #83d7fa; }
+
+/* Dashboard container */
+.night-mode .dashboard {
+  background: #0F172B;       /* invert from white */
+  border-color: #ffffff;     /* invert border to white */
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+/* Headings */
+.night-mode h2,
+.night-mode h3 {
+  color: #ffffff;            /* invert headings to white */
+}
+
+/* Alerts section */
+.night-mode .alerts-section {
+  background-color: #0F172B; /* invert background */
+  border: 2px solid #ffffff; /* invert border */
+  color: #ffffff;
+}
+
+.night-mode .alert-card {
+  background-color: #0F172B; /* invert from light gray */
+  border: 2px solid #ffffff; /* invert border */
+  color: #ffffff;            /* text white */
+}
+
+/* Chart container */
+.night-mode .chart-container {
+  background-color: #0F172B;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+/* System box */
+.night-mode .system-box {
+  background-color: #0F172B;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.night-mode .system-box li {
+  border-bottom: 1px dashed #ffffff; /* invert divider */
+}
+
+.night-mode .system-box li span {
+  color: #ffffff; /* values white instead of blue */
+}
+
+/* Recommendations section */
+.night-mode .recommendations-section {
+  background-color: #0F172B;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
+
+.night-mode .recommend-card {
+  background-color: #0F172B; /* invert from light gray */
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
