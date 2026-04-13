@@ -23,7 +23,8 @@
             [class.active]="activeItem === 'My Dashboard'">
           <i class="fas fa-home icon"></i>Dashboard 
         </li>
-        <li [class.active]="activeItem === 'Settings'" (click)="setActive('Settings')">
+        <li (click)="setActive('ChatBot'); loadContent('chatbot')" 
+            [class.active]="activeItem === 'ChatBot'">
           <i class="fas fa-cog icon"></i> ChatBot
         </li>
       </ul>
@@ -33,9 +34,14 @@
       <!-- Bottom section -->
       <div class="sidebar-bottom">
         <!-- Theme toggle -->
-        <button class="theme-toggle" (click)="toggleTheme()">
-          {{ (themeService.nightMode$ | async) ? '☀️ Day Mode' : '🌙 Night Mode' }}
-        </button>
+      <label class="theme-switch">
+        <span class="mode-label">☀️ Day</span>
+        <input type="checkbox" (change)="toggleTheme()" [checked]="themeService.nightMode$ | async">
+        <span class="slider"></span>
+        <span class="mode-label">🌙 Night</span>
+      </label>
+
+
 
         <hr class="sidebar-dividers">
         <p class="section-title">User Account</p>

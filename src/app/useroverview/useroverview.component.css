@@ -18,7 +18,7 @@ align-items: stretch;
   0%   { border-color: #05519e; }   /* dark blue */
   25%  { border-color: #2596be; }   /* cyan blue */
   50%  { border-color: #1b4c8f; }   /* navy */
-  75%  { border-color: #6a1b9a; }   /* purple accent */
+  75%  { border-color: #00d0ff; }   /* purple accent */
   100% { border-color: #05519e; }   /* back to dark blue */
 }
 
@@ -109,6 +109,7 @@ h2 {
   border-radius: 14px;
   border: 2px solid #1976d2;
   box-shadow: 0 0 12px #42a5f5, 0 0 24px #2196f3;
+  
 }
 
 .chart-container.medium canvas {
@@ -157,10 +158,13 @@ canvas {
   font-weight: 500;
   border-bottom: 1px dashed #e0e0e0;
   transition: background-color 0.2s ease, transform 0.2s ease;
+  border-radius: 7px;
+  margin: 5px;
+  padding: 10px
 }
 
 .system-box li:hover {
-  background-color: #f0f8ff; /* light blue highlight */
+  background-color: #abd8ff; /* light blue highlight */
   transform: scale(1.02);   /* subtle zoom */
 }
 
@@ -231,8 +235,13 @@ canvas {
 }
 
 .recommend-card.high { color: #1976d2; }
-.recommend-card.medium { color: #64b5f6; }
-.recommend-card.critical { color: #83d7fa; }
+ .recommend-card.medium { color: #64b5f6; }
+ .recommend-card.critical { color: #83d7fa; }
+
+ 
+.night-mode .recommend-card.high { color: #0080ff; }
+.night-mode .recommend-card.medium { color: #64b5f6; }
+.night-mode .recommend-card.critical { color: #83d7fa; }
 
 /* Dashboard container */
 .night-mode .dashboard {
@@ -250,7 +259,7 @@ canvas {
 /* Alerts section */
 .night-mode .alerts-section {
   background-color: #0F172B; /* invert background */
-  border: 2px solid #ffffff; /* invert border */
+  border: 2px solid #03ffe2; /* invert border */
   color: #ffffff;
 }
 
@@ -261,21 +270,34 @@ canvas {
 }
 
 /* Chart container */
-
-
+.night-mode .chart-container {
+  background-color: #0F172B;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+}
 /* System box */
 .night-mode .system-box {
   background-color: #0F172B;
   border: 2px solid #ffffff;
   color: #ffffff;
+  
 }
 
 .night-mode .system-box li {
   border-bottom: 1px dashed #ffffff; /* invert divider */
+  border-radius: 7px;
+  margin: 5px;
+  padding: 10px;
 }
 
+.night-mode .system-box li:hover {
+  background-color: #0099ff8b; /* light blue highlight */
+  transform: scale(1.02);   /* subtle zoom */
+}
+
+
 .night-mode .system-box li span {
-  color: #ffffff; /* values white instead of blue */
+  color: #00a6ff; /* values white instead of blue */
 }
 
 /* Recommendations section */
@@ -285,8 +307,41 @@ canvas {
   color: #ffffff;
 }
 
-.night-mode .recommend-card {
+ .night-mode .recommend-card {
   background-color: #0F172B; /* invert from light gray */
   border: 2px solid #ffffff;
   color: #ffffff;
 }
+
+
+.night-mode .alert-card.info { color: #04D9FF; }
+.night-mode .alert-card.warn { color: #06e0f8; }
+.night-mode .alert-card.crit { color: #04D9FF; }
+.night-mode .alert-card.error { color: #06e0f8; }
+
+.night-mode  .chart-container  {
+  background: #0F172B;
+  padding: 20px;
+  border-radius: 14px;
+  border: 2px solid #00e5ff;
+  box-shadow: 0 0 12px #00a1fe, 0 0 24px #2196f3;
+}
+
+/* Force canvas text rendering to white in night mode */
+.night-mode left-column {
+  color: #ffffff !important;
+}
+
+.night-mode .chart-container {
+  background: #0F172B;
+  border: 2px solid #00e5ff;
+  box-shadow: 0 0 12px #00a1fe, 0 0 24px #2196f3;
+  color: #ffffff; /* affects container text, not chart text */
+}
+
+.night-mode canvas {
+  background-color: #0F172B !important;
+  color: #ffffff !important; /* sets default canvas text color */
+}
+
+

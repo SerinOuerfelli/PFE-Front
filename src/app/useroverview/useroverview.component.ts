@@ -32,9 +32,7 @@ export class UserOverviewComponent implements OnInit {
 
     // Load KPI data
     this.kpiService.getKpis().subscribe(data => {
-      console.log('KPI data:', data);
       this.kpis = data;
-
       // Render charts initially
       if (this.kpis?.AlertsByLevel) this.renderAlertsChart(this.isNightMode);
       if (this.kpis?.RecommendationsByPriority) this.renderRecommendationsChart(this.isNightMode);
@@ -60,12 +58,12 @@ export class UserOverviewComponent implements OnInit {
       options: {
         responsive: true,
         plugins: {
-          legend: { labels: { color: isNight ? '#e0e0e0' : '#000' } },
-          title: { display: true, text: 'Alerts', color: isNight ? '#e0e0e0' : '#000' }
+          legend: { labels: { color: isNight ? '#ffffff' : '#000000' } },
+          title: { display: true, text: 'Alerts', color: isNight ? '#ffffff' : '#000000' }
         },
         scales: {
-          x: { ticks: { color: isNight ? '#e0e0e0' : '#000' } },
-          y: { ticks: { color: isNight ? '#e0e0e0' : '#000' } }
+          x: { ticks: { color: isNight ? '#ffffff' : '#000000' } },
+          y: { ticks: { color: isNight ? '#ffffff' : '#000000' } }
         }
       }
     });
@@ -87,8 +85,8 @@ export class UserOverviewComponent implements OnInit {
       options: {
         responsive: true,
         plugins: {
-          legend: { labels: { color: isNight ? '#e0e0e0' : '#000' } },
-          title: { display: true, text: 'Recommendations by Priority', color: isNight ? '#e0e0e0' : '#000' }
+          legend: { labels: { color: isNight ? '#ffffff' : '#000000' } },
+          title: { display: true, text: 'Recommendations by Priority', color: isNight ? '#ffffff' : '#000000' }
         }
       }
     });
@@ -124,88 +122,86 @@ export class UserOverviewComponent implements OnInit {
       options: {
         responsive: true,
         plugins: {
-          legend: { labels: { color: isNight ? '#e0e0e0' : '#000' } },
-          title: { display: true, text: 'System Rates', color: isNight ? '#e0e0e0' : '#000' }
+          legend: { labels: { color: isNight ? '#ffffff' : '#000000' } },
+          title: { display: true, text: 'System Rates', color: isNight ? '#ffffff' : '#000000' }
         },
         scales: {
-          x: { ticks: { color: isNight ? '#e0e0e0' : '#000' } },
-          y: { ticks: { color: isNight ? '#e0e0e0' : '#000' } }
+          x: { ticks: { color: isNight ? '#ffffff' : '#000000' } },
+          y: { ticks: { color: isNight ? '#ffffff' : '#000000' } }
         }
       }
     });
   }
 
   renderIncidentsChart(isNight: boolean) {
-    if (!this.kpis?.IncidentsPerMonth) return;
+  if (!this.kpis?.IncidentsPerMonth) return;
 
-    const canvas = document.getElementById('incidentsChart') as HTMLCanvasElement;
-    if (!canvas) return;
+  const canvas = document.getElementById('incidentsChart') as HTMLCanvasElement;
+  if (!canvas) return;
 
-    const months = Object.keys(this.kpis.IncidentsPerMonth).sort((a, b) => {
-      const [yearA, monthA] = a.split('-').map(Number);
-      const [yearB, monthB] = b.split('-').map(Number);
-      return yearA === yearB ? monthA - monthB : yearA - yearB;
-    });
+  const months = Object.keys(this.kpis.IncidentsPerMonth).sort((a, b) => {
+    const [yearA, monthA] = a.split('-').map(Number);
+    const [yearB, monthB] = b.split('-').map(Number);
+    return yearA === yearB ? monthA - monthB : yearA - yearB;
+  });
 
-    const values = months.map(m => Number(this.kpis.IncidentsPerMonth[m]));
+  const values = months.map(m => Number(this.kpis.IncidentsPerMonth[m]));
 
-    new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels: months.map(m => {
-          const [year, month] = m.split('-');
-          const date = new Date(Number(year), Number(month) - 1);
-          return date.toLocaleString('default', { month: 'short', year: 'numeric' });
-        }),
-        datasets: [{
-          label: 'Incidents per Month',
-          data: values,
-          borderColor: '#2196f3',
-          backgroundColor: '#bbdefb',
-          fill: true,
-          tension: 0.3,
-          pointHoverRadius: 8,
-          pointHoverBackgroundColor: '#1976d2',
-          pointHoverBorderColor: '#0d47a1'
-        }]
-      },
-      options: {
-        responsive: true,
-        animation: { duration: 1200, easing: 'easeOutBounce' },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                const value = context.raw as number;
-                return `Incidents: ${value.toFixed(2)}`;
-              }
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: months.map(m => {
+        const [year, month] = m.split('-');
+        const date = new Date(Number(year), Number(month) - 1);
+        return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+      }),
+      datasets: [{
+        label: 'Incidents per Month',
+        data: values,
+        borderColor: '#2196f3',
+        backgroundColor: '#bbdefb',
+        fill: true,
+        tension: 0.3,
+        pointHoverRadius: 8,
+        pointHoverBackgroundColor: '#1976d2',
+        pointHoverBorderColor: '#0d47a1'
+      }]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 1200, easing: 'easeOutBounce' },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const value = context.raw as number;
+              return `Incidents: ${value.toFixed(2)}`;
             }
           },
-          title: {
-            display: true,
-            text: 'Incidents per Month',
-            font: { size: 18, weight: 'bold' },
-            color: isNight ? '#e0e0e0' : '#1976d2'
-          },
-          legend: { labels: { color: isNight ? '#e0e0e0' : '#000' } }
+          titleColor: isNight ? '#ffffff' : '#000000',
+          bodyColor: isNight ? '#ffffff' : '#000000'
         },
-        scales: {
-          x: { ticks: { color: isNight ? '#e0e0e0' : '#000' } },
-          y: { ticks: { color: isNight ? '#e0e0e0' : '#000' } }
+        title: {
+          display: true,
+          text: 'Incidents per Month',
+          font: { size: 18, weight: 'bold' },
+          color: isNight ? '#ffffff' : '#1976d2'
         },
-        onClick: (event, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const month = months[index];
-            const value = values[index];
-            alert(`Month: ${month}, Incidents: ${value}`);
-          }
+        legend: {
+          labels: { color: isNight ? '#ffffff' : '#000000' }
         }
-      }
-    });
-  }
+      },
+      scales: {
+        x: { ticks: { color: isNight ? '#ffffff' : '#000000' } },
+        y: { ticks: { color: isNight ? '#ffffff' : '#000000' } }
+      },
+      // 🔑 Global font color fallback
+      color: isNight ? '#ffffff' : '#000000'
+    }
+  });
+}
 
-   toggleTheme(): void {
+  toggleTheme(): void {
     this.themeService.toggleTheme();
   }
 }
