@@ -140,16 +140,6 @@ body {
   flex-direction: column; /* stack topbar and main-content vertically */
 }
 
-/* TOPBAR */
-.topbar {
-  height: 60px;
-  background-color: #d5f4ff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 5px;
-  border-radius: 10px;
-}
 
 .search-box {
   display: flex;

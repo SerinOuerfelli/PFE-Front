@@ -21,16 +21,53 @@
       <ul class="menu">
         <li (click)="setActive('My Dashboard'); loadContent('useroverview')" 
             [class.active]="activeItem === 'My Dashboard'">
-          <i class="fas fa-home icon"></i>Dashboard 
+          <i class="fas fa-home icon"></i>Performances Dashboard 
         </li>
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" 
             [class.active]="activeItem === 'ChatBot'">
           <i class="fas fa-cog icon"></i> ChatBot
         </li>
-        <li (click)="setActive('Predictions'); loadContent('predictions')" 
-            [class.active]="activeItem === 'Predictions'">
-          <i class="fas fa-chart-line icon"></i> Predictions
+        <li (click)="toggleAlertsDropdown()" [class.active]="activeItem === 'Alerts'">
+            <i class="fas fa-bell icon"></i> Alerts
+            <i class="fas fa-chevron-down dropdown-icon"></i>
         </li>
+        <ul class="submenu" *ngIf="alertsDropdownOpen">
+            <li (click)="setActive('Alerts Dashboard'); loadContent('alerts-dashboard')" 
+                [class.active]="activeItem === 'Alerts Dashboard'">
+            <i class="fas fa-chart-line icon"></i> Alerts Dashboard
+            </li>
+            <li (click)="setActive('Thresholds'); loadContent('thresholds')" 
+                [class.active]="activeItem === 'Thresholds'">
+            <i class="fas fa-sliders-h icon"></i> Thresholds
+            </li>
+        </ul>
+        <li (click)="setActive('Equipment Overview '); loadContent('Equipment Overview ')" 
+            [class.active]="activeItem === 'Equipment Overview '">
+          <i class="fas fa-cog icon"></i> Equipment Overview 
+        </li>
+         <li (click)="setActive('Data Import & Simulation'); loadContent('Data Import & Simulation')" 
+            [class.active]="activeItem === 'Data Import & Simulation'">
+          <i class="fas fa-cog icon"></i> Data Import & Simulation0 
+        </li>
+        <li (click)="toggleAiDropdown()" [class.active]="activeItem === 'AI Results Analysis'">
+  <i class="fas fa-cog icon"></i> AI Results Analysis
+  <i class="fas fa-chevron-down dropdown-icon"></i>
+</li>
+<ul class="submenu" *ngIf="aiDropdownOpen">
+  <li (click)="setActive('Predictions'); loadContent('predictions')" 
+      [class.active]="activeItem === 'Predictions'">
+    <i class="fas fa-chart-line icon"></i> Predictions
+  </li>
+  <li (click)="setActive('Recommendations'); loadContent('recommendations')" 
+      [class.active]="activeItem === 'Recommendations'">
+    <i class="fas fa-lightbulb icon"></i> Recommendations
+  </li>
+  <li (click)="setActive('Decision Support'); loadContent('decision-support')" 
+      [class.active]="activeItem === 'Decision Support'">
+    <i class="fas fa-check-circle icon"></i> Decision Support
+  </li>
+</ul>
+
       </ul>
 
       <hr class="sidebar-dividers">
@@ -75,6 +112,7 @@
         <app-analytics *ngIf="currentContent === 'analytics'"></app-analytics>
         <app-rapports *ngIf="currentContent === 'rapports'"></app-rapports>
         <app-prediction *ngIf="currentContent === 'predictions'"></app-prediction>
+        <app-recommendation *ngIf="currentContent === 'recommendations'"></app-recommendation>
       </div>
     </div>
   </div>

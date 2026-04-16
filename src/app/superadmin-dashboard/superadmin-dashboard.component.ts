@@ -8,16 +8,17 @@ import { AnalyticsComponent } from '../analytics/analytics.component';
 import { RapportsComponent } from '../rapports/rapports.component';
 import { ThemeService } from '../services/theme.service';
 import { PredictionComponent } from '../prediction/prediction.component';
+import { RecommendationComponent } from '../recommendation/recommendation.component';
 
 @Component({
-  selector: 'app-user-dashboard',
+  selector: 'app-superadmin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent],
-  templateUrl: './user-dashboard.component.html',
-  styleUrl: './user-dashboard.component.css'
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent],
+  templateUrl: './superadmin-dashboard.component.html',
+  styleUrl: './superadmin-dashboard.component.css'
 })
-export class UserDashboardComponent {
-  activeItem: string = 'My Dashboard';
+export class SuperadminDashboardComponent {
+activeItem: string = 'My Dashboard';
   currentContent: string = 'useroverview';
   kpis: any;
 
@@ -29,7 +30,6 @@ export class UserDashboardComponent {
     private kpiService: KpiService,
     public themeService: ThemeService
   ) {}
-
   ngOnInit(): void {
     this.kpiService.getKpis().subscribe(data => {
       this.kpis = data;
@@ -38,7 +38,6 @@ export class UserDashboardComponent {
     this.username = localStorage.getItem('username');
     this.email = localStorage.getItem('email');
   }
-
   loadContent(target: string) {
     this.currentContent = target;
   }
@@ -56,4 +55,18 @@ export class UserDashboardComponent {
   toggleTheme(): void {
     this.themeService.toggleTheme();
   }
+
+  alertsDropdownOpen: boolean = false;
+
+toggleAlertsDropdown() {
+  this.alertsDropdownOpen = !this.alertsDropdownOpen;
+}
+aiDropdownOpen: boolean = false;
+
+toggleAiDropdown() {
+  this.aiDropdownOpen = !this.aiDropdownOpen;
+}
+
+
+
 }

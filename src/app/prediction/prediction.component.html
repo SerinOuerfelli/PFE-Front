@@ -1,0 +1,107 @@
+<div class="prediction-container">
+  <div class="header-section">
+    <div class="header-titles">
+      <h1>AI Predictions Overview</h1>
+      <p>Monitor your latest models and intelligent insights</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="state-box loading-box">
+    <div class="spinner"></div>
+    <p>Loading intelligent insights...</p>
+  </div>
+
+  <div *ngIf="error" class="state-box error-box">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && predictions.length === 0" class="state-box empty-box">
+    <div class="empty-icon">📭</div>
+    <p>No predictions found for this criteria.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && predictions.length > 0" class="content-wrapper">
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" [(ngModel)]="searchId" placeholder="Search by Prediction ID..." class="search-input" />
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="prediction-table">
+          <thead>
+            <tr>
+              <th class="col-id">Prediction ID</th>
+              <th class="col-date">Date</th>
+              <th class="col-type">Context / Type</th>
+              <th class="col-probability">Probability</th>
+              <th class="col-result">Result Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pred of paginatedPredictions">
+              <td>
+                <div class="id-wrapper">
+                  <span class="id-hash">#</span><span class="id-text">{{ pred.predictionId || 'N/A' }}</span>
+                </div>
+              </td>
+              <td class="date-cell">{{ pred.predictionDate ? (pred.predictionDate | date:'MMM dd, yyyy HH:mm') : '-' }}
+              </td>
+              <td>
+                <span class="type-badge">{{ pred.predictionType || '-' }}</span>
+              </td>
+              <td>
+                <div class="prob-wrapper" *ngIf="pred.probability !== undefined">
+                  <div class="prob-bar-bg">
+                    <div class="prob-bar-fill" [style.width.%]="pred.probability * 100"
+                      [ngClass]="{'high': pred.probability >= 0.8, 'medium': pred.probability >= 0.5 && pred.probability < 0.8, 'low': pred.probability < 0.5}">
+                    </div>
+                  </div>
+                  <span class="prob-text">{{ pred.probability | percent:'1.0-2' }}</span>
+                </div>
+                <span *ngIf="pred.probability === undefined" class="empty-cell">-</span>
+              </td>
+              <td>
+                <span class="status-indicator" [ngClass]="{
+                  'status-suspicious': pred.predictionResult === 'SUSPICIOUS',
+                  'status-normal': pred.predictionResult === 'NORMAL',
+                  'status-critical': pred.predictionResult === 'CRITICAL',
+                  'status-failure': pred.predictionResult === 'FAILURE_PREDICTED',
+                  'status-pending': !pred.predictionResult
+                }">
+                  <span class="status-dot"></span>
+                  {{ pred.predictionResult || 'PENDING' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-footer" *ngIf="totalPages > 1">
+        <p class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ mathMin(currentPage * pageSize,
+          filteredPredictions.length) }} of {{ filteredPredictions.length }} results</p>
+        <div class="pagination-controls">
+          <button class="btn-icon" [disabled]="currentPage === 1" (click)="prevPage()">
+            &laquo; Prev
+          </button>
+
+          <div class="page-numbers">
+            <button class="page-btn" *ngFor="let p of [].constructor(totalPages); let i = index"
+              [class.active]="currentPage === (i + 1)" (click)="setPage(i + 1)">
+              {{ i + 1 }}
+            </button>
+          </div>
+
+          <button class="btn-icon" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            Next &raquo;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

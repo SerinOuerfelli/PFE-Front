@@ -45,6 +45,8 @@ export class UserOverviewComponent implements OnInit {
     const canvas = document.getElementById('alertsChart') as HTMLCanvasElement;
     if (!canvas) return;
 
+    Chart.getChart(canvas)?.destroy();
+
     new Chart(canvas, {
       type: 'bar',
       data: {
@@ -73,6 +75,8 @@ export class UserOverviewComponent implements OnInit {
     const canvas = document.getElementById('recommendationsChart') as HTMLCanvasElement;
     if (!canvas) return;
 
+    Chart.getChart(canvas)?.destroy();
+
     new Chart(canvas, {
       type: 'pie',
       data: {
@@ -95,6 +99,8 @@ export class UserOverviewComponent implements OnInit {
   renderRatesChart(isNight: boolean) {
     const canvas = document.getElementById('ratesChart') as HTMLCanvasElement;
     if (!canvas) return;
+
+    Chart.getChart(canvas)?.destroy();
 
     new Chart(canvas, {
       type: 'bar',
@@ -138,6 +144,8 @@ export class UserOverviewComponent implements OnInit {
 
   const canvas = document.getElementById('incidentsChart') as HTMLCanvasElement;
   if (!canvas) return;
+  
+  Chart.getChart(canvas)?.destroy();
 
   const months = Object.keys(this.kpis.IncidentsPerMonth).sort((a, b) => {
     const [yearA, monthA] = a.split('-').map(Number);
@@ -192,8 +200,14 @@ export class UserOverviewComponent implements OnInit {
         }
       },
       scales: {
-        x: { ticks: { color: isNight ? '#ffffff' : '#000000' } },
-        y: { ticks: { color: isNight ? '#ffffff' : '#000000' } }
+        x: { 
+          ticks: { color: isNight ? '#ffffff' : '#475569' }, 
+          grid: { color: isNight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } 
+        },
+        y: { 
+          ticks: { color: isNight ? '#ffffff' : '#475569' }, 
+          grid: { color: isNight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' } 
+        }
       },
       // 🔑 Global font color fallback
       color: isNight ? '#ffffff' : '#000000'

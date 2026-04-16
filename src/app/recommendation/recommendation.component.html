@@ -1,0 +1,87 @@
+<div class="prediction-container">
+  <div class="header-section">
+    <div class="header-titles">
+      <h1>AI Recommendations</h1>
+      <p>Actionable insights suggested by the monitoring engine</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="state-box loading-box">
+    <div class="spinner"></div>
+    <p>Loading intelligent recommendations...</p>
+  </div>
+
+  <div *ngIf="error" class="state-box error-box">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && recommendations.length === 0" class="state-box empty-box">
+    <div class="empty-icon">📭</div>
+    <p>No recommendations found for this criteria.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && recommendations.length > 0" class="content-wrapper">
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Search by ID or Action..." class="search-input" />
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="prediction-table">
+          <thead>
+            <tr>
+              <th class="col-id">Rec ID</th>
+              <th class="col-pid">Prediction ID</th>
+              <th class="col-action">Description</th>
+              <th class="col-priority">Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rec of paginatedRecommendations">
+              <td>
+                <div class="id-wrapper">
+                  <span class="id-hash">#</span><span class="id-text">{{ rec.recommendationId || 'N/A' }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="id-wrapper">
+                  <span class="id-hash">#</span><span class="id-text">{{ rec.predictionId || 'N/A' }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="action-cell">
+                    <span class="action-text">{{ rec.description || '-' }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="priority-badge" [ngClass]="{
+                    'priority-critical': rec.priority === 'CRITICAL',
+                    'priority-high': rec.priority === 'HIGH',
+                    'priority-medium': rec.priority === 'MEDIUM' || rec.priority === 'LOW'
+                }">
+                  {{ rec.priority || 'LOW' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-footer" *ngIf="totalPages > 1">
+        <p class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ mathMin(currentPage * pageSize, filteredRecommendations.length) }} of {{ filteredRecommendations.length }} results</p>
+        <div class="pagination-controls">
+          <button class="btn-icon" [disabled]="currentPage === 1" (click)="prevPage()">&laquo; Prev</button>
+          <div class="page-numbers">
+            <button class="page-btn" *ngFor="let p of [].constructor(totalPages); let i = index" [class.active]="currentPage === (i + 1)" (click)="setPage(i + 1)">{{ i + 1 }}</button>
+          </div>
+          <button class="btn-icon" [disabled]="currentPage === totalPages" (click)="nextPage()">Next &raquo;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

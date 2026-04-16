@@ -1,0 +1,96 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PredictionService } from '../services/prediction.service';
+import { Prediction } from '../Model/Prediction';
+
+@Component({
+  selector: 'app-prediction',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './prediction.component.html',
+  styleUrls: ['./prediction.component.css']
+})
+export class PredictionComponent implements OnInit {
+  predictions: Prediction[] = [];
+  loading: boolean = true;
+  error: string | null = null;
+  currentPage: number = 1;
+  pageSize: number = 5;
+  searchId: string = '';
+
+  constructor(private predictionService: PredictionService) { }
+
+  ngOnInit(): void {
+    this.fetchPredictions();
+  }
+
+  fetchPredictions(): void {
+    this.loading = true;
+    this.error = null;
+    this.predictionService.getAllPredictions().subscribe({
+      next: (data) => {
+        // Mock data if array is completely empty so that the UI can be showcased.
+        // Usually, the real data structure matches what's returned from the Spring backend.
+        if (!data || data.length === 0) {
+          // Generate 12 mock items so we can see pagination in action
+          this.predictions = Array.from({ length: 12 }).map((_, i) => ({
+            predictionId: 101 + i,
+            predictionDate: new Date(Date.now() - (i * 86400000)).toISOString(),
+            predictionType: i % 2 === 0 ? 'TRANSACTION_ANOMALY' : 'LOGIN_ANOMALY',
+            predictionResult: i % 3 === 0 ? 'SUSPICIOUS' : 'NORMAL',
+            probability: 0.5 + (i * 0.03)
+          }));
+        } else {
+          this.predictions = data;
+        }
+        this.currentPage = 1;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching predictions:', err);
+        // Fallback or error display
+        this.error = 'Failed to load predictions. Please ensure the backend is running.';
+        this.loading = false;
+      }
+    });
+  }
+
+  get filteredPredictions(): Prediction[] {
+    if (!this.searchId) {
+      return this.predictions;
+    }
+    return this.predictions.filter(p => p.predictionId?.toString().includes(this.searchId));
+  }
+
+  get paginatedPredictions(): Prediction[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredPredictions.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredPredictions.length / this.pageSize);
+  }
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  setPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+}

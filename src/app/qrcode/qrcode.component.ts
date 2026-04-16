@@ -59,8 +59,12 @@ export class QrcodeComponent implements OnInit {
           this.router.navigate(['/admin-dashboard']);
         } else if (role === 'USER') {
           this.router.navigate(['/user-dashboard']);
-        } else {
-          this.router.navigate(['/default-dashboard']);
+        } else if (role === 'SUPERADMIN') {
+          this.router.navigate(['/superadmin-dashboard']);
+        } 
+        
+        else {
+          this.router.navigate(['/login-dashboard']);
         }
         },
         error: (err) => {
