@@ -161,6 +161,41 @@ body {
   font-size: 13.5px;
 }
 
+/* LIST ITEM CONTENT LAYOUT */
+.li-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* NOTIFICATION BADGES */
+.notif-badge {
+  background-color: #ef4444; /* Bright red to catch attention */
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: auto; /* Push to right */
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.notif-badge.pulse {
+  animation: pulse-red 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  padding: 2px 8px;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+  }
+}
+
 /* ICONS */
 .icon {
   font-size: 16px;

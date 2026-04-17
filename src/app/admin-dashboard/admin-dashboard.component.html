@@ -46,21 +46,33 @@
 
 
         <li (click)="toggleAiDropdown()" [class.active]="activeItem === 'AI Results Analysis'">
-          <i class="fas fa-cog icon"></i> AI Results Analysis
+          <div class="li-content">
+            <i class="fas fa-brain icon"></i> AI Results Analysis
+            <span *ngIf="unread.total > 0" class="notif-badge pulse">!</span>
+          </div>
           <i class="fas fa-chevron-down dropdown-icon"></i>
         </li>
         <ul class="submenu" *ngIf="aiDropdownOpen">
           <li (click)="setActive('Predictions'); loadContent('predictions')"
             [class.active]="activeItem === 'Predictions'">
-            <i class="fas fa-chart-line icon"></i> Predictions
+            <div class="li-content">
+              <i class="fas fa-chart-line icon"></i> Predictions
+              <span *ngIf="unread.predictions > 0" class="notif-badge">+{{ unread.predictions }}</span>
+            </div>
           </li>
           <li (click)="setActive('Recommendations'); loadContent('recommendations')"
             [class.active]="activeItem === 'Recommendations'">
-            <i class="fas fa-lightbulb icon"></i> Recommendations
+            <div class="li-content">
+              <i class="fas fa-lightbulb icon"></i> Recommendations
+              <span *ngIf="unread.recommendations > 0" class="notif-badge">+{{ unread.recommendations }}</span>
+            </div>
           </li>
           <li (click)="setActive('Decision Support'); loadContent('decision-support')"
             [class.active]="activeItem === 'Decision Support'">
-            <i class="fas fa-check-circle icon"></i> Decision Support
+            <div class="li-content">
+              <i class="fas fa-check-circle icon"></i> Decision Support
+              <span *ngIf="unread.decisions > 0" class="notif-badge">+{{ unread.decisions }}</span>
+            </div>
           </li>
         </ul>
 
