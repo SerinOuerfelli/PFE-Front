@@ -9,6 +9,7 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 import { RapportsComponent } from './rapports/rapports.component';
 import { SuperadminDashboardComponent } from './superadmin-dashboard/superadmin-dashboard.component';
 import { PredictionComponent } from './prediction/prediction.component';
+import { DecisionComponent } from './decision/decision.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,5 +22,6 @@ export const routes: Routes = [
   { path: 'rapports', component: RapportsComponent },
   { path: 'superadmin-dashboard', component: SuperadminDashboardComponent, canActivate: [AuthGuard] },
   { path: 'predictions', component: PredictionComponent },
+  { path: 'decisions', component: DecisionComponent },
 
 ];

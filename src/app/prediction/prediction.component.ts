@@ -18,6 +18,7 @@ export class PredictionComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 5;
   searchId: string = '';
+  expandedPredictionIds: Set<number> = new Set();
 
   constructor(private predictionService: PredictionService) { }
 
@@ -92,5 +93,19 @@ export class PredictionComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
+  }
+
+  toggleExpand(predictionId: number | undefined): void {
+    if (!predictionId) return;
+    if (this.expandedPredictionIds.has(predictionId)) {
+      this.expandedPredictionIds.delete(predictionId);
+    } else {
+      this.expandedPredictionIds.add(predictionId);
+    }
+  }
+
+  isExpanded(predictionId: number | undefined): boolean {
+    if (!predictionId) return false;
+    return this.expandedPredictionIds.has(predictionId);
   }
 }

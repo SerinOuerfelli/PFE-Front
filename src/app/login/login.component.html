@@ -6,26 +6,25 @@
   </div>
 
   <!-- Login form -->
-  <div class="form-section" 
-     [ngClass]="{
+  <div class="form-section" [ngClass]="{
        'remove-clip': clipRemoved,
-       'add-clip': !clipRemoved,
        'slide-right': animateOut
      }">
 
-
     <div class="box">
       <h2>Login</h2>
-      <input type="text" [(ngModel)]="email" placeholder="Email" />
-      <input type="password" [(ngModel)]="password" placeholder="Password" />
-      <button (click)="login()" id="removeClipBtn">Login</button>
+      <div class="input-group">
+        <div class="input-field">
+          <input type="text" [(ngModel)]="email" placeholder="Email" />
+        </div>
+        <div class="input-field">
+          <input type="password" [(ngModel)]="password" placeholder="Password" />
+        </div>
+      </div>
+      <button (click)="login()" id="removeClipBtn">Secure Login</button>
       <p class="switch">
         Don't have an account? <span (click)="switchToSignup()">Sign Up</span>
       </p>
     </div>
   </div>
 </div>
-
-
-
-

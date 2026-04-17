@@ -34,6 +34,7 @@
         <table class="prediction-table">
           <thead>
             <tr>
+              <th class="col-expand"></th>
               <th class="col-id">Prediction ID</th>
               <th class="col-date">Date</th>
               <th class="col-type">Context / Type</th>
@@ -42,7 +43,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let pred of paginatedPredictions">
+            <ng-container *ngFor="let pred of paginatedPredictions">
+              <tr class="main-row" [class.expanded]="isExpanded(pred.predictionId)" (click)="toggleExpand(pred.predictionId)">
+                <td class="expand-cell">
+                  <span class="expand-icon" [class.rotated]="isExpanded(pred.predictionId)">❯</span>
+                </td>
               <td>
                 <div class="id-wrapper">
                   <span class="id-hash">#</span><span class="id-text">{{ pred.predictionId || 'N/A' }}</span>
@@ -76,7 +81,52 @@
                   {{ pred.predictionResult || 'PENDING' }}
                 </span>
               </td>
-            </tr>
+              </tr>
+              <!-- Expanded Details Row -->
+              <tr *ngIf="isExpanded(pred.predictionId)" class="details-row">
+                <td colspan="6" class="details-cell">
+                  <div class="details-container">
+                    
+                    <div class="details-section" *ngIf="pred.transactions && pred.transactions.length > 0">
+                      <h4>Related Transactions</h4>
+                      <div class="transaction-cards">
+                        <div class="transaction-card" *ngFor="let tx of pred.transactions">
+                          <div class="tx-header">
+                            <span class="tx-id">#{{ tx.idTransaction }}</span>
+                            <span class="tx-amount">{{ tx.amount | currency:'USD' }}</span>
+                          </div>
+                          <div class="tx-body">
+                            <div class="tx-info"><span class="label">Date:</span> {{ tx.date | date:'short' }}</div>
+                            <div class="tx-info"><span class="label">Channel:</span> {{ tx.transactionChannel }}</div>
+                          </div>
+                          <div class="tx-footer">
+                            <span class="status-badge" [ngClass]="tx.transactionStatus?.toLowerCase()">{{ tx.transactionStatus }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="details-section" *ngIf="pred.recommendations && pred.recommendations.length > 0">
+                      <h4>System Recommendations</h4>
+                      <div class="recommendation-cards">
+                        <div class="recommendation-card" *ngFor="let rec of pred.recommendations" [ngClass]="rec.priority?.toLowerCase()">
+                          <div class="rec-header">
+                            <span class="rec-icon">💡</span>
+                            <span class="rec-priority">{{ rec.priority }} Priority</span>
+                          </div>
+                          <p class="rec-desc">{{ rec.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="empty-details" *ngIf="(!pred.transactions || pred.transactions.length === 0) && (!pred.recommendations || pred.recommendations.length === 0)">
+                      <p>No additional details available for this prediction.</p>
+                    </div>
+
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>

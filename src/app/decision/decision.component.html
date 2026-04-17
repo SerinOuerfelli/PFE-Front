@@ -1,0 +1,67 @@
+<div class="decision-container" [class.night-mode]="themeService.nightMode$ | async">
+  <div class="header-section">
+    <div class="header-titles">
+      <h1>Decision Support Logs</h1>
+      <p>Tracking system-wide approvals, overrides, and automated logic</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Search by description or user..." class="search-input" />
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="state-box">
+    <div class="spinner"></div>
+    <p>Retrieving decisions...</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="state-box error-box">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button (click)="fetchDecisions()" class="retry-btn">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && filteredDecisions.length === 0" class="state-box empty-box">
+    <div class="empty-icon">📂</div>
+    <p>No matching decisions found.</p>
+  </div>
+
+  <div *ngIf="!loading && filteredDecisions.length > 0" class="decision-grid">
+    <div class="decision-card" *ngFor="let dec of filteredDecisions">
+      <div class="card-glow"></div>
+      
+      <div class="card-header">
+        <div class="user-avatar" [ngClass]="dec.user.role === 'SUPERADMIN' ? 'superadmin-avatar' : 'admin-avatar'">
+          {{ getInitials(dec.user.username) }}
+        </div>
+        <div class="user-meta">
+          <div class="user-identity">
+            <span class="username">{{ dec.user.username }}</span>
+            <span class="badge active-badge" *ngIf="dec.user.active"></span>
+          </div>
+          <span class="user-email">{{ dec.user.email }}</span>
+          <span class="badge role-badge">{{ dec.user.role }}</span>
+        </div>
+        <div class="decision-id">#{{ dec.decisionId }}</div>
+      </div>
+
+      <div class="card-body">
+        <p class="description">{{ dec.description }}</p>
+      </div>
+
+      <div class="card-footer">
+        <div class="date-info">
+          <span class="icon">📅</span>
+          {{ dec.decisionDate | date:'MMM dd, yyyy HH:mm' }}
+        </div>
+        <div class="action-status">
+          <span class="status-dot"></span>
+          Executed
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

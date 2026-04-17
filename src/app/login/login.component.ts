@@ -19,35 +19,37 @@ export class LoginComponent {
   clipRemoved = false;
   animateOut = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   login() {
     const loginRequest: LoginRequestDTO = {
       email: this.email,
       password: this.password,
-   
     };
 
-    this.authService.login(loginRequest).subscribe({
-      next: (response) => {
-        this.authService.saveAuthData(response);
-        // Example: navigate after animation
-         this.router.navigate(['/qrcode']);
-      },
-      error: (err) => {
-        alert('Login failed: ' + err.message);
-      }
-    });
-
-    // Trigger animation
+    // 1. Trigger the out-animation immediately for instant visual feedback
     this.clipRemoved = true;
     this.animateOut = true;
 
-    setTimeout(() => {
-      // After animation, show QR code or navigate
-    }, 1200);
+    // 2. Perform the login
+    this.authService.login(loginRequest).subscribe({
+      next: (response) => {
+        this.authService.saveAuthData(response);
+        
+        // 3. Wait for the slide-out animation (0.8s) to finish before routing
+        setTimeout(() => {
+          this.router.navigate(['/qrcode']);
+        }, 800);
+      },
+      error: (err) => {
+        // If error, bring the panels back
+        this.clipRemoved = false;
+        this.animateOut = false;
+        alert('Login failed: ' + err.message);
+      }
+    });
   }
-isSignup = false;
+  isSignup = false;
   switchToSignup() { this.isSignup = true; }
 
   switchToLogin() {

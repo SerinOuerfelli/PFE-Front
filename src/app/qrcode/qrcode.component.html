@@ -1,14 +1,14 @@
 <div class="auth-container">
   <!-- Left QR section -->
   <div class="welcome-section">
-    <qrcode [qrdata]="qrData" [width]="250" [errorCorrectionLevel]="'M'"></qrcode>
-    
+    <qrcode [qrdata]="qrData" [width]="220" [errorCorrectionLevel]="'M'"></qrcode>
+    <p>Scan the code or enter verification below</p>
   </div>
 
   <!-- Right verification section -->
   <div class="form-section">
     <div class="box">
-      <h2>Enter Verification Code</h2>
+      <h2>Two-Factor Auth</h2>
 
       <div class="code-inputs">
         <input type="text" maxlength="1" [(ngModel)]="codeDigits[0]" (input)="moveFocus($event,0)" autofocus />
@@ -19,7 +19,7 @@
         <input type="text" maxlength="1" [(ngModel)]="codeDigits[5]" (input)="moveFocus($event,5)" />
       </div>
 
-      <button (click)="verify()">Verify</button>
+      <button (click)="verify()">Verify Secure Login</button>
     </div>
   </div>
 </div>

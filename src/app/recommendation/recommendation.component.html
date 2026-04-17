@@ -34,6 +34,7 @@
         <table class="prediction-table">
           <thead>
             <tr>
+              <th class="col-expand"></th>
               <th class="col-id">Rec ID</th>
               <th class="col-pid">Prediction ID</th>
               <th class="col-action">Description</th>
@@ -41,7 +42,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let rec of paginatedRecommendations">
+            <ng-container *ngFor="let rec of paginatedRecommendations">
+              <tr class="main-row" [class.expanded]="isExpanded(rec.recommendationId)" (click)="toggleExpand(rec.recommendationId)">
+                <td class="expand-cell">
+                  <span class="expand-icon" [class.rotated]="isExpanded(rec.recommendationId)">❯</span>
+                </td>
               <td>
                 <div class="id-wrapper">
                   <span class="id-hash">#</span><span class="id-text">{{ rec.recommendationId || 'N/A' }}</span>
@@ -58,15 +63,60 @@
                 </div>
               </td>
               <td>
-                <span class="priority-badge" [ngClass]="{
-                    'priority-critical': rec.priority === 'CRITICAL',
-                    'priority-high': rec.priority === 'HIGH',
-                    'priority-medium': rec.priority === 'MEDIUM' || rec.priority === 'LOW'
-                }">
-                  {{ rec.priority || 'LOW' }}
-                </span>
+                <div class="priority-actions">
+                  <span class="priority-badge" [ngClass]="{
+                      'priority-critical': rec.priority === 'CRITICAL',
+                      'priority-high': rec.priority === 'HIGH',
+                      'priority-medium': rec.priority === 'MEDIUM' || rec.priority === 'LOW'
+                  }">
+                    {{ rec.priority || 'LOW' }}
+                  </span>
+                  
+                  <button *ngIf="!rec.decisions || rec.decisions.length === 0" 
+                          class="take-action-btn" 
+                          (click)="openDecisionModal(rec); $event.stopPropagation()">
+                    Take Action
+                  </button>
+                </div>
               </td>
-            </tr>
+              </tr>
+
+              <!-- Expanded Decisions Row -->
+              <tr *ngIf="isExpanded(rec.recommendationId)" class="details-row">
+                <td colspan="5" class="details-cell">
+                  <div class="details-container">
+                    <h4>Associated Decisions & Actions</h4>
+                    <div class="decision-cards" *ngIf="rec.decisions && rec.decisions.length > 0">
+                      <div class="decision-card" *ngFor="let dec of rec.decisions">
+                        <div class="dec-header">
+                          <div class="user-info">
+                            <div class="user-avatar" [style.background-color]="dec.user?.role === 'SUPERADMIN' ? '#2563eb' : '#64748b'">
+                                {{ getInitials(dec.user?.username || 'U') }}
+                            </div>
+                            <div class="user-text">
+                                <span class="username">{{ dec.user?.username }}</span>
+                                <span class="user-role">{{ dec.user?.role }}</span>
+                            </div>
+                          </div>
+                          <div class="dec-date">{{ dec.decisionDate | date:'MMM dd, HH:mm' }}</div>
+                        </div>
+                        <div class="dec-body">
+                          <p>{{ dec.description }}</p>
+                        </div>
+                        <div class="dec-footer">
+                          <span class="execution-badge">
+                            <span class="dot"></span> Executed
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="empty-decisions" *ngIf="!rec.decisions || rec.decisions.length === 0">
+                      <p>No logged decisions for this recommendation.</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
@@ -81,6 +131,42 @@
           </div>
           <button class="btn-icon" [disabled]="currentPage === totalPages" (click)="nextPage()">Next &raquo;</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Take Action Modal -->
+  <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="icon">📝</span>
+          <h2>Logging Strategic Decision</h2>
+        </div>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rec-context" *ngIf="selectedRecommendation">
+           <span class="context-label">Context:</span>
+           <span class="context-text">{{ selectedRecommendation.description }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="decisionDesc">How would you like to handle this anomaly?</label>
+          <textarea id="decisionDesc" 
+                    [(ngModel)]="newDecisionDescription" 
+                    placeholder="Enter thorough action steps or decision details..."
+                    rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeModal()" [disabled]="isSubmitting">Cancel</button>
+        <button class="btn-primary" (click)="submitDecision()" [disabled]="isSubmitting || !newDecisionDescription.trim()">
+          <span *ngIf="!isSubmitting">Confirm Decision</span>
+          <span *ngIf="isSubmitting" class="mini-spinner"></span>
+        </button>
       </div>
     </div>
   </div>

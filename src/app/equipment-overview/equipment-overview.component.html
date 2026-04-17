@@ -1,0 +1,78 @@
+<div class="overview-container" [class.night-mode]="themeService.nightMode$ | async">
+  <div class="header-section">
+    <div class="header-titles">
+      <h1>Equipment Overview</h1>
+      <p>Tracking DAB/TPE operational contexts geographically</p>
+    </div>
+    <div class="header-toggles">
+      <button class="toggle-btn" [class.active]="mapOpen" (click)="toggleMap()">
+        <span class="icon">🗺️</span> Map View
+      </button>
+      <button class="toggle-btn" [class.active]="listOpen" (click)="toggleList()">
+        <span class="icon">📋</span> List View
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="state-box">
+    <div class="spinner"></div>
+    <p>Retrieving equipment geo-data...</p>
+  </div>
+
+  <!-- Map Dropdown / Section -->
+  <div class="collapsible-section" [class.open]="mapOpen" *ngIf="!loading">
+    <div class="section-header" (click)="toggleMap()">
+      <h3>Geographic Context</h3>
+      <span class="chevron" [class.rotated]="mapOpen">▼</span>
+    </div>
+    <div class="section-content" [style.max-height]="mapOpen ? '600px' : '0'">
+      <div class="map-wrapper">
+        <div #mapElement class="leaflet-map-element"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- List Dropdown / Section -->
+  <div class="collapsible-section" [class.open]="listOpen" *ngIf="!loading">
+    <div class="section-header" (click)="toggleList()">
+      <h3>Equipment Registry Details</h3>
+      <span class="chevron" [class.rotated]="listOpen">▼</span>
+    </div>
+    <div class="section-content" [style.max-height]="listOpen ? '800px' : '0'">
+      <div class="table-wrapper">
+        <table class="equipment-table">
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Type</th>
+              <th>City</th>
+              <th>Area</th>
+              <th>Region</th>
+              <th>Status</th>
+              <th>Coordinates</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let eq of equipments"
+                id="eq-row-{{ eq.id }}"
+                (click)="selectEquipment(eq.id)"
+                [class.selected-row]="selectedEquipmentId === eq.id">
+              <td class="font-mono"><strong>{{ eq.reference }}</strong></td>
+              <td><span class="badge type-badge">{{ eq.type }}</span></td>
+              <td>{{ eq.city }}</td>
+              <td>{{ eq.area }}</td>
+              <td>{{ eq.region }}</td>
+              <td>
+                <span class="badge status-badge" 
+                      [ngClass]="eq.status === 'ACTIVE' ? 'status-active' : (eq.status === 'INACTIVE' ? 'status-inactive' : 'status-maintenance')">
+                  {{ eq.status }}
+                </span>
+              </td>
+              <td class="font-mono coords-muted">{{ eq.latitude | number:'1.2-4' }}, {{ eq.longitude | number:'1.2-4' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
