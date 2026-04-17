@@ -8,7 +8,7 @@ import { Decision } from '../Model/Decision';
   providedIn: 'root'
 })
 export class DecisionService {
-  private apiUrl = 'http://localhost:8080/api/decision';
+  private apiUrl = 'http://localhost:8080/api/decisions';
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { }
 

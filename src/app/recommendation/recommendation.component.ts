@@ -159,12 +159,22 @@ export class RecommendationComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    // Create a new decision object. 
-    // Usually the user is handled by backend from token, and date by backend too.
+    // Bind current user context and system time for the database payload
+    const storedId = localStorage.getItem('id');
+    const uId = storedId ? parseInt(storedId, 10) : 0;
+    
     const decisionRequest: any = {
       description: this.newDecisionDescription,
-      recommendationId: this.selectedRecommendation.recommendationId
-      // We might need to map more fields depending on backend expectation
+      recommendation: {
+        recommendationId: this.selectedRecommendation.recommendationId
+      },
+      decisionDate: new Date().toISOString(),
+      user: {
+        userId: uId,
+        username: localStorage.getItem('username') || '',
+        email: localStorage.getItem('email') || '',
+        role: localStorage.getItem('role') || ''
+      }
     };
 
     this.decisionService.createDecision(decisionRequest as Decision).subscribe({

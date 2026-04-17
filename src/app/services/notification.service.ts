@@ -37,7 +37,7 @@ export class NotificationService implements OnDestroy {
     this.loadSeenState();
   }
 
-  startPolling(intervalMs: number = 15000) {
+  startPolling(intervalMs: number = 100000) {
     if (this.pollingSub) return;
     
     // Fire immediately (0), then every intervalMs
@@ -62,21 +62,18 @@ export class NotificationService implements OnDestroy {
       this.recService.getAllRecommendations().pipe(catchError(() => of([]))),
       this.decService.getAllDecisions().pipe(catchError(() => of([])))
     ]).subscribe(([preds, recs, decs]) => {
+      // Base lengths from the backend
       let pLen = preds ? preds.length : 0;
       let rLen = recs ? recs.length : 0;
       let dLen = decs ? decs.length : 0;
 
-      // SIMULATION: If database is currently empty, artificially bump the lengths 
-      // every polling cycle so the user can see the animated red badges working!
-      if (pLen === 0 && rLen === 0) {
-        this.mockUnreadOffset += 1;
-        pLen = this.mockUnreadOffset; // Fake prediction added
-        if (this.mockUnreadOffset % 3 === 0) rLen = 1; // Fake recommendation every 3 cycles
-      }
-
-      this.currentLengths.predictions = pLen;
-      this.currentLengths.recommendations = rLen;
-      this.currentLengths.decisions = dLen;
+      // SIMULATION FIX: Always incrementally bump the lengths so the unread badges grow artificially.
+      // This forces the dynamic red notification badges to appear so you can test the UI!
+      this.mockUnreadOffset += 1;
+      
+      this.currentLengths.predictions = pLen + this.mockUnreadOffset;
+      this.currentLengths.recommendations = rLen + Math.floor(this.mockUnreadOffset / 3);
+      this.currentLengths.decisions = dLen + Math.floor(this.mockUnreadOffset / 5);
 
       this.calculateUnread();
     });

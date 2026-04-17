@@ -1,1 +1,138 @@
-<p>admin-dashboard works!</p>
+<body>
+  <!-- Root wrapper with night-mode binding -->
+  <div [class.night-mode]="themeService.nightMode$ | async" class="app-wrapper">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- HEADER -->
+      <div class="sidebar-header">
+        <img src="assets/biatlogo.png" alt="BIAT Logo">
+        <div class="header-text">
+          <h3>BIAT IT</h3>
+          <p class="tagline">Smart Monitoring</p>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+      <p class="section-title">Navigation</p>
+
+      <!-- MENU -->
+      <ul class="menu">
+        <li (click)="setActive('Equipment Overview '); loadContent('Equipment Overview ')"
+          [class.active]="activeItem === 'Equipment Overview '">
+          <i class="fas fa-cog icon"></i> Equipment Overview
+        </li>
+        <li (click)="setActive('My Dashboard'); loadContent('useroverview')"
+          [class.active]="activeItem === 'My Dashboard'">
+          <i class="fas fa-home icon"></i>Performances Dashboard
+        </li>
+
+        <hr class="sidebar-divider">
+        <div class="section-title">Administrative</div>
+        
+        <li (click)="setActive('User Management'); loadContent('usermanagement')"
+          [class.active]="activeItem === 'User Management'">
+          <i class="fas fa-users-cog icon"></i> User Management
+        </li>
+        <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
+          <i class="fas fa-cog icon"></i> ChatBot
+        </li>
+        <li (click)="toggleAlertsDropdown()" [class.active]="activeItem === 'Alerts'">
+          <i class="fas fa-bell icon"></i> Alerts
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </li>
+        <ul class="submenu" *ngIf="alertsDropdownOpen">
+          <li (click)="setActive('Alerts Dashboard'); loadContent('alerts-dashboard')"
+            [class.active]="activeItem === 'Alerts Dashboard'">
+            <i class="fas fa-chart-line icon"></i> Alerts Dashboard
+          </li>
+          <li (click)="setActive('Thresholds'); loadContent('thresholds')" [class.active]="activeItem === 'Thresholds'">
+            <i class="fas fa-sliders-h icon"></i> Thresholds
+          </li>
+        </ul>
+
+
+        <li (click)="toggleAiDropdown()" [class.active]="activeItem === 'AI Results Analysis'">
+          <div class="li-content">
+            <i class="fas fa-brain icon"></i> AI Results Analysis
+            <span *ngIf="unread.total > 0" class="notif-badge pulse">!</span>
+          </div>
+          <i class="fas fa-chevron-down dropdown-icon"></i>
+        </li>
+        <ul class="submenu" *ngIf="aiDropdownOpen">
+          <li (click)="setActive('Predictions'); loadContent('predictions')"
+            [class.active]="activeItem === 'Predictions'">
+            <div class="li-content">
+              <i class="fas fa-chart-line icon"></i> Predictions
+              <span *ngIf="unread.predictions > 0" class="notif-badge">+{{ unread.predictions }}</span>
+            </div>
+          </li>
+          <li (click)="setActive('Recommendations'); loadContent('recommendations')"
+            [class.active]="activeItem === 'Recommendations'">
+            <div class="li-content">
+              <i class="fas fa-lightbulb icon"></i> Recommendations
+              <span *ngIf="unread.recommendations > 0" class="notif-badge">+{{ unread.recommendations }}</span>
+            </div>
+          </li>
+          <li (click)="setActive('Decision Support'); loadContent('decision-support')"
+            [class.active]="activeItem === 'Decision Support'">
+            <div class="li-content">
+              <i class="fas fa-check-circle icon"></i> Decision Support
+              <span *ngIf="unread.decisions > 0" class="notif-badge">+{{ unread.decisions }}</span>
+            </div>
+          </li>
+        </ul>
+
+      </ul>
+
+      <hr class="sidebar-dividers">
+
+      <!-- Bottom section -->
+      <div class="sidebar-bottom">
+        <!-- Theme toggle -->
+        <label class="theme-switch">
+          <span class="mode-label">☀️ Day</span>
+          <input type="checkbox" (change)="toggleTheme()" [checked]="themeService.nightMode$ | async">
+          <span class="slider"></span>
+          <span class="mode-label">🌙 Night</span>
+        </label>
+
+
+
+        <hr class="sidebar-dividers">
+        <p class="section-title">User Account</p>
+
+        <!-- User info block -->
+        <div class="user-info">
+          <div class="avatar">{{ username?.charAt(0) }}</div>
+          <div class="user-text">
+            <p class="user-name">{{ username }}</p>
+            <p class="user-email">{{ email }}</p>
+          </div>
+        </div>
+
+        <hr class="sidebar-dividers">
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- Right section (topbar + main content) -->
+    <div class="right-section">
+      <div class="topbar">
+        <!-- Add topbar content here -->
+      </div>
+
+      <div class="main-content">
+        <app-useroverview *ngIf="currentContent === 'useroverview'"></app-useroverview>
+        <app-analytics *ngIf="currentContent === 'analytics'"></app-analytics>
+        <app-rapports *ngIf="currentContent === 'rapports'"></app-rapports>
+        <app-prediction *ngIf="currentContent === 'predictions'"></app-prediction>
+        <app-recommendation *ngIf="currentContent === 'recommendations'"></app-recommendation>
+        <app-decision *ngIf="currentContent === 'decision-support'"></app-decision>
+        <app-equipment-overview *ngIf="currentContent === 'Equipment Overview '"></app-equipment-overview>
+        <app-user-management *ngIf="currentContent === 'usermanagement'"></app-user-management>
+      </div>
+    </div>
+  </div>
+</body>
