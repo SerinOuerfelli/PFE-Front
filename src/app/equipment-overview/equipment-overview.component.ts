@@ -33,15 +33,24 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
     this.equipmentService.getEquipmentGeoData().subscribe(data => {
       this.equipments = data;
       this.loading = false;
-      this.initMap();
     });
   }
 
   ngAfterViewInit() {
-    // Prevent overriding if data loaded faster
-    if (!this.loading && !this.map) {
-      setTimeout(() => this.initMap(), 100);
-    }
+    // Wait for data + DOM to be ready before initialising Leaflet
+    setTimeout(() => {
+      if (!this.loading && !this.map) {
+        this.initMap();
+      } else {
+        // Poll until data has arrived then init
+        const poll = setInterval(() => {
+          if (!this.loading) {
+            clearInterval(poll);
+            this.initMap();
+          }
+        }, 100);
+      }
+    }, 200);
   }
 
   ngOnDestroy() {

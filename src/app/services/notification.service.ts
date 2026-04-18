@@ -37,7 +37,7 @@ export class NotificationService implements OnDestroy {
     this.loadSeenState();
   }
 
-  startPolling(intervalMs: number = 100000) {
+  startPolling(intervalMs: number = 500000) {
     if (this.pollingSub) return;
     
     // Fire immediately (0), then every intervalMs

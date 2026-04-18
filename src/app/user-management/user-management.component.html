@@ -1,20 +1,22 @@
 <div class="management-container" [class.night-mode]="themeService.nightMode$ | async">
   <!-- Header Section -->
-  <div class="header-section">
-    <div class="title-group">
-      <h1>User Management</h1>
-      <p>Configure system access and manage administrative roles</p>
-    </div>
-    <div class="actions-group">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, email or role...">
-      </div>
-      <button class="add-btn" (click)="openAddModal()">
-        <i class="fas fa-user-plus"></i> Add New User
-      </button>
-    </div>
+<div class="header-section">
+  <div class="title-group">
+    <h1>User Management</h1>
+    <p>Configure system access and manage administrative roles</p>
   </div>
+  <button class="add-btn" (click)="openAddModal()">
+    <i class="fas fa-user-plus"></i> Add New User
+  </button>
+</div>
+
+<div class="search-row">
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, email or role...">
+  </div>
+</div>
+
 
   <!-- Users Table Card -->
   <div class="table-card glass-panel">

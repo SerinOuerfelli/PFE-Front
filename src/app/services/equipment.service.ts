@@ -20,7 +20,7 @@ export interface Equipment {
   providedIn: 'root'
 })
 export class EquipmentService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8080/api/map';
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { }
 
