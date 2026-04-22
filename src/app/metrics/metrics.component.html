@@ -1,0 +1,118 @@
+<div [class.night-mode]="themeService.nightMode$ | async" class="metrics-wrapper">
+
+  <!-- ===== Toast Notifications ===== -->
+  <div class="toast success" *ngIf="successMessage">
+    <span>✅</span> {{successMessage}}
+  </div>
+  <div class="toast error" *ngIf="errorMessage">
+    <span>❌</span> {{errorMessage}}
+  </div>
+
+  <!-- ===== Page Header ===== -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">📊</div>
+      <div>
+        <h2>Metrics</h2>
+        <p class="subtitle">Monitor & manage system performance metrics</p>
+      </div>
+    </div>
+    <button class="btn-primary" (click)="openCreateModal()">
+      <span>＋</span> Add Metric
+    </button>
+  </div>
+
+  <!-- ===== Search Bar ===== -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      placeholder="Search by name or unit…"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="applyFilter()"
+    />
+    <span class="metric-count">{{filteredMetrics.length}} result(s)</span>
+  </div>
+
+  <!-- ===== Table ===== -->
+  <div class="glass-card table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Value</th>
+          <th>Unit</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredMetrics.length === 0">
+          <td colspan="5" class="empty-row">No metrics found.</td>
+        </tr>
+        <tr *ngFor="let metric of filteredMetrics; let i = index" class="data-row">
+          <td class="id-cell">{{metric.metricId}}</td>
+         <td class="name-cell">{{metric.metricName}}</td>
+          <td class="value-cell">
+            <span class="value-badge">{{metric.threshold}}</span>
+          </td>
+          <td class="unit-cell">{{metric.unit}}</td>
+          <td class="actions-cell">
+            <button class="btn-edit" (click)="openEditModal(metric)" title="Edit">✏️</button>
+            <button class="btn-delete" (click)="confirmDelete(metric)" title="Delete">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ===== Create / Edit Modal ===== -->
+<div class="modal-backdrop" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditing ? '✏️ Edit Metric' : '➕ New Metric' }}</h3>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Name <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.metricName" placeholder="e.g. CPU Usage" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Value <span class="required">*</span></label>
+         <input type="number" [(ngModel)]="form.threshold" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label>Unit <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.unit" placeholder="e.g. %, ms, MB" />
+        </div>
+      </div>
+      </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-save" (click)="saveMetric()">
+        {{ isEditing ? 'Save Changes' : 'Create Metric' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Delete Confirm Modal ===== -->
+<div class="modal-backdrop" *ngIf="isDeleteModalOpen" (click)="closeModal()">
+  <div class="modal modal-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header danger">
+      <h3>🗑️ Delete Metric</h3>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-msg">Are you sure you want to delete metric <strong>#{{selectedId}}</strong>? This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-danger" (click)="deleteMetric()">Delete</button>
+    </div>
+  </div>
+</div>

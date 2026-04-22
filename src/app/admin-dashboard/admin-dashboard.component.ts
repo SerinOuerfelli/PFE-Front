@@ -12,11 +12,12 @@ import { RecommendationComponent } from '../recommendation/recommendation.compon
 import { DecisionComponent } from '../decision/decision.component';
 import { EquipmentOverviewComponent } from '../equipment-overview/equipment-overview.component';
 import { NotificationService, UnreadCounts } from '../services/notification.service';
+import { MetricsComponent } from '../metrics/metrics.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, MetricsComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })

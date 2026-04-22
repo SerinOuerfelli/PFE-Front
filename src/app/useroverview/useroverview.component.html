@@ -1,66 +1,206 @@
 <div [class.night-mode]="themeService.nightMode$ | async" class="app-wrapper">
   <div class="dashboard">
-    <h2>KPI Dashboard Performances</h2>
 
-    <!-- Alerts box -->
-    <div class="alerts-section">
-      <h3>Alerts</h3>
-      <div class="alerts-row">
-        <div class="alert-card info">
-          <span class="label">INFORMATION</span>
-          <span class="value">{{kpis?.AlertsByLevel?.INFO}}</span>
-        </div>
-        <div class="alert-card warn">
-          <span class="label">WARNING</span>
-          <span class="value">{{kpis?.AlertsByLevel?.WARNING}}</span>
-        </div>
-        <div class="alert-card crit">
-          <span class="label">CRITICAL</span>
-          <span class="value">{{kpis?.AlertsByLevel?.CRITICAL}}</span>
-        </div>
-        <div class="alert-card error">
-          <span class="label">ERROR</span>
-          <span class="value">{{kpis?.AlertsByLevel?.ERROR}}</span>
+    <!-- ===== Header ===== -->
+    <div class="page-header">
+      <div class="header-left">
+        <div class="header-badge">LIVE</div>
+        <div>
+          <h2>KPI Dashboard</h2>
+          <p class="subtitle">Performance overview · Smart Monitor</p>
         </div>
       </div>
     </div>
 
-    <!-- incident column -->
-    <div class="left-column">
-      <div class="chart-container ">
-        <canvas id="incidentsChart"></canvas>
+    <!-- ===== Stat Cards Row ===== -->
+    <div class="stat-cards">
+
+      <div class="stat-card blue">
+        <div class="stat-icon">💳</div>
+        <div class="stat-body">
+          <span class="stat-label">Avg Transaction</span>
+          <span class="stat-value">{{kpis?.AverageTransactionAmount | number:'1.0-0'}} <small>TND</small></span>
+        </div>
       </div>
+
+      <div class="stat-card indigo">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-body">
+          <span class="stat-label">Avg Prediction Prob.</span>
+          <span class="stat-value">{{(kpis?.AveragePredictionProbability * 100) | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-body">
+          <span class="stat-label">Transaction Success</span>
+          <span class="stat-value">{{kpis?.TransactionSuccessRate | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
+      <div class="stat-card teal">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-body">
+          <span class="stat-label">Equipment Uptime</span>
+          <span class="stat-value">{{kpis?.EquipmentUptimeRate | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="stat-icon">🔴</div>
+        <div class="stat-body">
+          <span class="stat-label">Critical Risk Rate</span>
+          <span class="stat-value">{{kpis?.CriticalRiskRate | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-icon">🚨</div>
+        <div class="stat-body">
+          <span class="stat-label">Fraud Suspicion</span>
+          <span class="stat-value">{{kpis?.FraudSuspicionRate | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
+      <div class="stat-card sky">
+        <div class="stat-icon">👥</div>
+        <div class="stat-body">
+          <span class="stat-label">Active Clients</span>
+          <span class="stat-value">{{kpis?.ActiveClients}}</span>
+        </div>
+      </div>
+
+      <div class="stat-card slate">
+        <div class="stat-icon">🔌</div>
+        <div class="stat-body">
+          <span class="stat-label">Equipment Inactive</span>
+          <span class="stat-value">{{kpis?.EquipmentInactiveRate | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Right column -->
-    <div class="right-column">
-      <div class="system-box">
-        <h3>System Rates</h3>
-        <ul>
-          <li>Failure Rate <span>{{kpis?.EquipmentFailureRate | number:'1.2-2'}}%</span></li>
-          <li>Success Rate <span>{{kpis?.TransactionSuccessRate | number:'1.2-2'}}%</span></li>
-          <li>Uptime Rate <span>{{kpis?.EquipmentUptimeRate | number:'1.2-2'}}%</span></li>
-          <li>Critical Risk <span>{{kpis?.CriticalRiskRate | number:'1.2-2'}}%</span></li>
-          <li>Fraud Suspicion <span>{{kpis?.FraudSuspicionRate | number:'1.2-2'}}%</span></li>
-          <li>Normal Rate <span>{{kpis?.NormalRate | number:'1.2-2'}}%</span></li>
+    <!-- ===== Row 1: Transactions by Date + Channel Donut ===== -->
+    <div class="row-2col">
+
+      <div class="glass-card chart-card">
+        <div class="card-header">
+          <span class="card-title">📅 Transactions by Date</span>
+        </div>
+        <canvas id="txByDateChart"></canvas>
+      </div>
+
+      <div class="glass-card chart-card small">
+        <div class="card-header">
+          <span class="card-title">📡 Transactions by Channel</span>
+        </div>
+        <canvas id="channelChart"></canvas>
+        <!-- inline legend -->
+        <div class="channel-legend" *ngIf="kpis?.TransactionsByChannel">
+          <div class="cl-item" *ngFor="let entry of kpis.TransactionsByChannel | keyvalue">
+            <span class="cl-label">{{entry.key}}</span>
+            <span class="cl-count">{{entry.value}}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Row 2: System Rates Bar + Recommendations Donut ===== -->
+    <div class="row-2col">
+
+      <div class="glass-card chart-card">
+        <div class="card-header">
+          <span class="card-title">📊 System Rates Overview</span>
+        </div>
+        <canvas id="ratesChart"></canvas>
+      </div>
+
+      <div class="glass-card chart-card small">
+        <div class="card-header">
+          <span class="card-title">🎯 Recommendations by Priority</span>
+        </div>
+        <canvas id="recommendationsChart"></canvas>
+        <div class="rec-legend" *ngIf="kpis?.RecommendationsByPriority">
+          <div class="rl-item" *ngFor="let entry of kpis.RecommendationsByPriority | keyvalue"
+               [class]="'rl-' + $any(entry).key.toLowerCase()">
+            <span class="rl-badge">{{$any(entry).key}}</span>
+            <span class="rl-count">{{$any(entry).value}}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Row 3: Top Clients Bar + Rate list ===== -->
+    <div class="row-2col">
+
+      <div class="glass-card chart-card">
+        <div class="card-header">
+          <span class="card-title">🏆 Top Clients by Transactions</span>
+        </div>
+        <canvas id="topClientsChart"></canvas>
+      </div>
+
+      <div class="glass-card rates-list-card">
+        <div class="card-header">
+          <span class="card-title">📈 System Rates Breakdown</span>
+        </div>
+        <ul class="rates-list">
+          <li>
+            <span class="rl-name">Failure Rate</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar failure" [style.width.%]="kpis?.EquipmentFailureRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.EquipmentFailureRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Tx Success</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar success" [style.width.%]="kpis?.TransactionSuccessRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.TransactionSuccessRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Uptime</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar uptime" [style.width.%]="kpis?.EquipmentUptimeRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.EquipmentUptimeRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Critical Risk</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar critical" [style.width.%]="kpis?.CriticalRiskRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.CriticalRiskRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Fraud Suspicion</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar fraud" [style.width.%]="kpis?.FraudSuspicionRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.FraudSuspicionRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Normal Rate</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar normal" [style.width.%]="kpis?.NormalRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.NormalRate | number:'1.1-1'}}%</span>
+          </li>
+          <li>
+            <span class="rl-name">Inactive Equip.</span>
+            <div class="rl-bar-wrap">
+              <div class="rl-bar inactive" [style.width.%]="kpis?.EquipmentInactiveRate || 0"></div>
+            </div>
+            <span class="rl-pct">{{kpis?.EquipmentInactiveRate | number:'1.1-1'}}%</span>
+          </li>
         </ul>
       </div>
+
     </div>
 
-    <!-- Recommendations box -->
-    <div class="recommendations-section">
-      <h3>Recommendations by Priority</h3>
-      <div class="recommendations-row">
-        <div class="recommend-card high">
-          HIGH <span>{{kpis?.RecommendationsByPriority?.HIGH}}</span>
-        </div>
-        <div class="recommend-card medium">
-          MEDIUM <span>{{kpis?.RecommendationsByPriority?.MEDIUM}}</span>
-        </div>
-        <div class="recommend-card critical">
-          CRITICAL <span>{{kpis?.RecommendationsByPriority?.CRITICAL}}</span>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
