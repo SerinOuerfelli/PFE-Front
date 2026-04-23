@@ -38,19 +38,7 @@
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
           <i class="fas fa-cog icon"></i> ChatBot
         </li>
-        <li (click)="toggleAlertsDropdown()" [class.active]="activeItem === 'Alerts'">
-          <i class="fas fa-bell icon"></i> Alerts
-          <i class="fas fa-chevron-down dropdown-icon"></i>
-        </li>
-        <ul class="submenu" *ngIf="alertsDropdownOpen">
-          <li (click)="setActive('Alerts Dashboard'); loadContent('alerts-dashboard')"
-            [class.active]="activeItem === 'Alerts Dashboard'">
-            <i class="fas fa-chart-line icon"></i> Alerts Dashboard
-          </li>
-          <li (click)="setActive('Thresholds'); loadContent('thresholds')" [class.active]="activeItem === 'Thresholds'">
-            <i class="fas fa-sliders-h icon"></i> Thresholds
-          </li>
-        </ul>
+       
 
 
         <li (click)="toggleAiDropdown()" [class.active]="activeItem === 'AI Results Analysis'">
