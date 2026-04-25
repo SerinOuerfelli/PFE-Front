@@ -645,7 +645,8 @@
 .scroll-bottom-btn {
   position: absolute;
   bottom: 120px;
-  right: 32px;
+  left: 50%; 
+  transform: translateX(-50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -664,7 +665,7 @@
 
 .scroll-bottom-btn:hover {
   background: #2563eb;
-  transform: translateY(-2px);
+  
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
 }
 
@@ -696,9 +697,7 @@
     grid-template-columns: 1fr;
   }
 
-  .message-bubble {
-    max-width: 85%;
-  }
+
 
   .chat-header {
     padding: 14px 16px;

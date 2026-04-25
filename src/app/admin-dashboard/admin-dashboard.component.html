@@ -120,6 +120,6 @@
     </div>
   </div>
 
-  <!-- Floating Chat Bubble (always visible) -->
-  <app-chat-bubble></app-chat-bubble>
+  <!-- Floating Chat Bubble (hidden on full chatbot page) -->
+  <app-chat-bubble *ngIf="currentContent !== 'chatbot'"></app-chat-bubble>
 </body>
