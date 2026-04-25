@@ -13,11 +13,13 @@ import { DecisionComponent } from '../decision/decision.component';
 import { EquipmentOverviewComponent } from '../equipment-overview/equipment-overview.component';
 import { NotificationService, UnreadCounts } from '../services/notification.service';
 import { UserManagementComponent } from '../user-management/user-management.component';
+import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, UserManagementComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, UserManagementComponent, ChatbotComponent, ChatBubbleComponent],
   templateUrl: './superadmin-dashboard.component.html',
   styleUrl: './superadmin-dashboard.component.css'
 })

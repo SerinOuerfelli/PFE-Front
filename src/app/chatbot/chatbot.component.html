@@ -1,1 +1,137 @@
-<p>chatbot works!</p>
+<!-- Chatbot Container -->
+<div class="chatbot-container" id="chatbot-container">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="bot-avatar-header">
+        <svg viewBox="0 0 44 44" class="header-bot-svg">
+          <defs>
+            <linearGradient id="headerBotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#60a5fa" />
+              <stop offset="100%" style="stop-color:#1e40af" />
+            </linearGradient>
+          </defs>
+          <rect width="44" height="44" rx="14" fill="url(#headerBotGrad)" opacity="0.2"/>
+          <text x="22" y="28" text-anchor="middle" fill="white" font-size="18" font-weight="800" font-family="Inter, sans-serif">B</text>
+        </svg>
+        <div class="avatar-pulse"></div>
+      </div>
+      <div class="header-info">
+        <h2>BIAT Assistant</h2>
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Online — Ready to help</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" (click)="clearChat()" title="Clear conversation" id="clear-chat-btn">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-area" #messagesContainer id="messages-area">
+
+    <!-- Welcome Screen (shown when no messages) -->
+    <div class="welcome-screen" *ngIf="!isChatStarted">
+      <div class="welcome-icon">
+        <div class="welcome-glow"></div>
+        <svg viewBox="0 0 80 80" class="welcome-bot-svg">
+          <defs>
+            <linearGradient id="welcomeBotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e40af" />
+              <stop offset="50%" style="stop-color:#3b82f6" />
+              <stop offset="100%" style="stop-color:#60a5fa" />
+            </linearGradient>
+          </defs>
+          <rect width="80" height="80" rx="24" fill="url(#welcomeBotGrad)"/>
+          <text x="40" y="38" text-anchor="middle" fill="white" font-size="22" font-weight="800" font-family="Inter, sans-serif">BIAT</text>
+          <text x="40" y="56" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="14" font-weight="600" font-family="Inter, sans-serif">AI</text>
+        </svg>
+      </div>
+      <h3>Welcome to BIAT Assistant</h3>
+      <p class="welcome-subtitle">Your AI-powered smart monitoring companion. Ask me anything about your system, ATMs, transactions, or predictions.</p>
+
+      <div class="suggestions-grid">
+        <button class="suggestion-chip" *ngFor="let suggestion of suggestions" (click)="sendSuggestion(suggestion)">
+          <span>{{ suggestion }}</span>
+          <i class="fas fa-arrow-right chip-arrow"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="message-wrapper" *ngFor="let msg of messages" [ngClass]="{ 'user-wrapper': msg.role === 'user', 'bot-wrapper': msg.role === 'bot' }">
+
+      <!-- Bot Avatar -->
+      <div class="msg-avatar bot-msg-avatar" *ngIf="msg.role === 'bot'">
+        <svg viewBox="0 0 32 32">
+          <defs>
+            <linearGradient id="msgBotG" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e40af" />
+              <stop offset="100%" style="stop-color:#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="10" fill="url(#msgBotG)"/>
+          <text x="16" y="21.5" text-anchor="middle" fill="white" font-size="15" font-weight="700" font-family="Inter, sans-serif">B</text>
+        </svg>
+      </div>
+
+      <div class="message-bubble" [ngClass]="{ 'user-bubble': msg.role === 'user', 'bot-bubble': msg.role === 'bot' }">
+        <div class="message-content">{{ msg.content }}</div>
+        <div class="message-time">{{ formatTime(msg.timestamp) }}</div>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="msg-avatar user-msg-avatar" *ngIf="msg.role === 'user'">
+        <div class="user-initial-circle">{{ getUserInitial() }}</div>
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="message-wrapper bot-wrapper" *ngIf="isLoading">
+      <div class="msg-avatar bot-msg-avatar">
+        <svg viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="10" fill="url(#msgBotG)"/>
+          <text x="16" y="21.5" text-anchor="middle" fill="white" font-size="15" font-weight="700" font-family="Inter, sans-serif">B</text>
+        </svg>
+      </div>
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area" id="chat-input-area">
+    <div class="input-wrapper">
+      <input
+        #messageInput
+        type="text"
+        [(ngModel)]="userInput"
+        (keydown)="handleKeydown($event)"
+        placeholder="Type your message..."
+        [disabled]="isLoading"
+        class="chat-input"
+        id="chat-message-input"
+        autocomplete="off"
+      />
+      <button
+        class="send-btn"
+        (click)="sendMessage()"
+        [disabled]="!userInput.trim() || isLoading"
+        [ngClass]="{ 'send-active': userInput.trim() }"
+        id="send-message-btn"
+      >
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+    <p class="input-hint">Press <kbd>Enter</kbd> to send</p>
+  </div>
+
+</div>

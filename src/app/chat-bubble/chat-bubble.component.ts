@@ -4,28 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { ChatService, ChatMessage } from '../services/chat.service';
 
 @Component({
-  selector: 'app-chatbot',
+  selector: 'app-chat-bubble',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './chatbot.component.html',
-  styleUrl: './chatbot.component.css'
+  templateUrl: './chat-bubble.component.html',
+  styleUrl: './chat-bubble.component.css'
 })
-export class ChatbotComponent implements AfterViewChecked {
-  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  @ViewChild('messageInput') private messageInput!: ElementRef;
+export class ChatBubbleComponent implements AfterViewChecked {
+  @ViewChild('bubbleMessages') private messagesContainer!: ElementRef;
 
+  isOpen: boolean = false;
   messages: ChatMessage[] = [];
   userInput: string = '';
   isLoading: boolean = false;
   isChatStarted: boolean = false;
   username: string = '';
 
-  // Quick suggestions for the welcome screen
   suggestions: string[] = [
-    '🔍 Show me system status',
-    '📊 Latest predictions summary',
-    '🏧 List all ATMs',
-    '⚠️ Any active alerts?'
+    '🔍 System status',
+    '📊 KPI summary',
+    '🏧 List ATMs',
+    '👥 Show users'
   ];
 
   constructor(private chatService: ChatService) {
@@ -36,13 +35,20 @@ export class ChatbotComponent implements AfterViewChecked {
     this.scrollToBottom();
   }
 
+  toggleChat(): void {
+    this.isOpen = !this.isOpen;
+  }
+
+  closeChat(): void {
+    this.isOpen = false;
+  }
+
   sendMessage(content?: string): void {
     const message = content || this.userInput.trim();
     if (!message || this.isLoading) return;
 
     this.isChatStarted = true;
 
-    // Add user message
     this.messages.push({
       role: 'user',
       content: message,
@@ -64,7 +70,7 @@ export class ChatbotComponent implements AfterViewChecked {
       error: (err) => {
         this.messages.push({
           role: 'bot',
-          content: '⚠️ Sorry, I couldn\'t process your request. Please check the connection and try again.',
+          content: '⚠️ Connection error. Please try again.',
           timestamp: new Date()
         });
         this.isLoading = false;
@@ -74,7 +80,6 @@ export class ChatbotComponent implements AfterViewChecked {
   }
 
   sendSuggestion(suggestion: string): void {
-    // Strip the emoji prefix for a cleaner query
     const cleanMessage = suggestion.replace(/^[\u{1F300}-\u{1FAFF}\u{2702}-\u{27B0}\u{FE00}-\u{FE0F}\u{200D}]+\s*/u, '').trim();
     this.sendMessage(cleanMessage || suggestion);
   }

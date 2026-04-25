@@ -1,0 +1,142 @@
+<!-- Floating Chat Bubble Button -->
+<div class="chat-bubble-fab" (click)="toggleChat()" [class.open]="isOpen" id="chat-fab-btn">
+  <div class="fab-icon-wrapper">
+    <i class="fas fa-comment-dots fab-icon" *ngIf="!isOpen"></i>
+    <i class="fas fa-times fab-icon" *ngIf="isOpen"></i>
+  </div>
+  <div class="fab-pulse-ring"></div>
+</div>
+
+<!-- Chat Popup Window -->
+<div class="chat-popup" [class.visible]="isOpen" id="chat-popup-window">
+
+  <!-- Popup Header -->
+  <div class="popup-header">
+    <div class="popup-header-left">
+      <div class="bot-avatar-popup">
+        <svg viewBox="0 0 36 36" class="bot-svg">
+          <defs>
+            <linearGradient id="botGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#60a5fa" />
+              <stop offset="100%" style="stop-color:#2563eb" />
+            </linearGradient>
+          </defs>
+          <rect width="36" height="36" rx="10" fill="url(#botGrad)"/>
+          <text x="18" y="24" text-anchor="middle" fill="white" font-size="18" font-weight="700" font-family="Inter, sans-serif">B</text>
+        </svg>
+        <span class="online-dot"></span>
+      </div>
+      <div class="popup-header-info">
+        <h4>BIAT Assistant</h4>
+        <span class="popup-status">Online</span>
+      </div>
+    </div>
+    <div class="popup-header-actions">
+      <button class="popup-action-btn" (click)="clearChat()" title="Clear chat">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+      <button class="popup-action-btn close-btn" (click)="closeChat()" title="Close">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Popup Messages -->
+  <div class="popup-messages" #bubbleMessages id="bubble-messages-area">
+
+    <!-- Welcome State -->
+    <div class="popup-welcome" *ngIf="!isChatStarted">
+      <div class="welcome-bot-icon">
+        <svg viewBox="0 0 56 56" class="welcome-svg">
+          <defs>
+            <linearGradient id="welcomeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e40af" />
+              <stop offset="50%" style="stop-color:#3b82f6" />
+              <stop offset="100%" style="stop-color:#60a5fa" />
+            </linearGradient>
+          </defs>
+          <rect width="56" height="56" rx="16" fill="url(#welcomeGrad)"/>
+          <text x="28" y="22" text-anchor="middle" fill="white" font-size="14" font-weight="600" font-family="Inter, sans-serif">BIAT</text>
+          <text x="28" y="40" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="10" font-weight="500" font-family="Inter, sans-serif">AI</text>
+        </svg>
+      </div>
+      <h5>How can I help you?</h5>
+      <p>Ask me anything about your system.</p>
+      <div class="popup-suggestions">
+        <button class="popup-chip" *ngFor="let s of suggestions" (click)="sendSuggestion(s)">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="popup-msg" *ngFor="let msg of messages"
+         [ngClass]="{ 'popup-msg-user': msg.role === 'user', 'popup-msg-bot': msg.role === 'bot' }">
+
+      <!-- Bot Avatar -->
+      <div class="popup-msg-avatar bot-avatar" *ngIf="msg.role === 'bot'">
+        <svg viewBox="0 0 28 28">
+          <defs>
+            <linearGradient id="msgBotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#1e40af" />
+              <stop offset="100%" style="stop-color:#3b82f6" />
+            </linearGradient>
+          </defs>
+          <rect width="28" height="28" rx="8" fill="url(#msgBotGrad)"/>
+          <text x="14" y="19" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="Inter, sans-serif">B</text>
+        </svg>
+      </div>
+
+      <div class="popup-msg-content" [ngClass]="{ 'user-content': msg.role === 'user', 'bot-content': msg.role === 'bot' }">
+        <span class="popup-msg-text">{{ msg.content }}</span>
+        <span class="popup-msg-time">{{ formatTime(msg.timestamp) }}</span>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="popup-msg-avatar user-avatar" *ngIf="msg.role === 'user'">
+        <div class="user-initial">{{ getUserInitial() }}</div>
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="popup-msg popup-msg-bot" *ngIf="isLoading">
+      <div class="popup-msg-avatar bot-avatar">
+        <svg viewBox="0 0 28 28">
+          <rect width="28" height="28" rx="8" fill="url(#msgBotGrad)"/>
+          <text x="14" y="19" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="Inter, sans-serif">B</text>
+        </svg>
+      </div>
+      <div class="popup-typing">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Input -->
+  <div class="popup-input-area">
+    <div class="popup-input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="userInput"
+        (keydown)="handleKeydown($event)"
+        placeholder="Type a message..."
+        [disabled]="isLoading"
+        class="popup-input"
+        id="bubble-chat-input"
+        autocomplete="off"
+      />
+      <button
+        class="popup-send"
+        (click)="sendMessage()"
+        [disabled]="!userInput.trim() || isLoading"
+        [ngClass]="{ 'active': userInput.trim() }"
+        id="bubble-send-btn"
+      >
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
