@@ -46,7 +46,7 @@
   </div>
 
   <!-- Popup Messages -->
-  <div class="popup-messages" #bubbleMessages id="bubble-messages-area">
+  <div class="popup-messages" #bubbleMessages id="bubble-messages-area" (scroll)="onScroll()">
 
     <!-- Welcome State -->
     <div class="popup-welcome" *ngIf="!isChatStarted">
@@ -127,12 +127,23 @@
         <span class="dot"></span>
       </div>
     </div>
+    
+    <!-- Scroll down button -->
+    <button 
+      class="popup-scroll-bottom-btn" 
+      *ngIf="isUserScrolledUp" 
+      (click)="forceScrollToBottom()"
+      title="Scroll to bottom"
+    >
+      <i class="fas fa-chevron-down"></i>
+    </button>
   </div>
 
   <!-- Popup Input -->
   <div class="popup-input-area">
     <div class="popup-input-wrapper">
       <input
+        #messageInput
         type="text"
         [(ngModel)]="userInput"
         (keydown)="handleKeydown($event)"

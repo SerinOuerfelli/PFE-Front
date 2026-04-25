@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { QRCodeModule } from 'angularx-qrcode';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-qrcode',
   standalone: true,
@@ -35,11 +37,11 @@ export class QrcodeComponent implements OnInit {
           console.log('SECRET:', this.secret);
         },
         error: (err) => {
-          alert('Failed to generate QR: ' + err.message);
+          this.showError('Failed to generate QR code. Please try logging in again.');
         }
       });
     } else {
-      alert('No email found. Please log in again.');
+      this.showError('Session expired. Please log in again.');
     }
   }
 
@@ -73,11 +75,11 @@ export class QrcodeComponent implements OnInit {
             err.error?.message ||
             err.error ||
             'Verification failed';
-          alert('❌ ' + message);
+          this.showError('Invalid or expired code. Please try again.');
         }
       });
     } else {
-      alert('Please enter the 6-digit code.');
+      this.showError('Please enter the complete 6-digit code.');
     }
   }
 
@@ -108,5 +110,24 @@ export class QrcodeComponent implements OnInit {
     if (value && index === 5) {
       this.verify();
     }
+  }
+
+  private showError(message: string) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Verification Error',
+      text: message,
+      confirmButtonText: 'Try Again',
+      timer: 5000,
+      timerProgressBar: true,
+      background: 'rgba(15, 30, 45, 0.95)',
+      color: '#ffffff',
+      backdrop: `rgba(0,0,0,0.4)`,
+      customClass: {
+        popup: 'swal2-dark-glass',
+        title: 'swal2-title',
+        confirmButton: 'swal2-confirm'
+      }
+    });
   }
 }

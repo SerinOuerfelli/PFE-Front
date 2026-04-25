@@ -37,7 +37,7 @@
   </div>
 
   <!-- Messages Area -->
-  <div class="messages-area" #messagesContainer id="messages-area">
+  <div class="messages-area" #messagesContainer id="messages-area" (scroll)="onScroll()">
 
     <!-- Welcome Screen (shown when no messages) -->
     <div class="welcome-screen" *ngIf="!isChatStarted">
@@ -120,6 +120,16 @@
         <div class="typing-dot"></div>
       </div>
     </div>
+
+    <!-- Scroll down button -->
+    <button 
+      class="scroll-bottom-btn" 
+      *ngIf="isUserScrolledUp" 
+      (click)="forceScrollToBottom()"
+      title="Scroll to bottom"
+    >
+      <i class="fas fa-chevron-down"></i>
+    </button>
   </div>
 
   <!-- Input Area -->

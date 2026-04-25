@@ -581,6 +581,50 @@
 }
 
 /* =========================================
+   SCROLL BUTTON
+   ========================================= */
+.popup-scroll-bottom-btn {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(30, 64, 175, 0.9);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.popup-scroll-bottom-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.popup-scroll-bottom-btn:active {
+  transform: translateY(1px);
+}
+
+:host-context(.night-mode) .popup-scroll-bottom-btn {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+:host-context(.night-mode) .popup-scroll-bottom-btn:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 480px) {

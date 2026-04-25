@@ -12,6 +12,7 @@ import { ChatService, ChatMessage } from '../services/chat.service';
 })
 export class ChatBubbleComponent implements AfterViewChecked {
   @ViewChild('bubbleMessages') private messagesContainer!: ElementRef;
+  @ViewChild('messageInput') private messageInput!: ElementRef;
 
   isOpen: boolean = false;
   messages: ChatMessage[] = [];
@@ -19,6 +20,7 @@ export class ChatBubbleComponent implements AfterViewChecked {
   isLoading: boolean = false;
   isChatStarted: boolean = false;
   username: string = '';
+  isUserScrolledUp: boolean = false;
 
   suggestions: string[] = [
     '🔍 System status',
@@ -55,6 +57,8 @@ export class ChatBubbleComponent implements AfterViewChecked {
       timestamp: new Date()
     });
 
+    this.forceScrollToBottom();
+
     this.userInput = '';
     this.isLoading = true;
 
@@ -66,6 +70,7 @@ export class ChatBubbleComponent implements AfterViewChecked {
           timestamp: new Date()
         });
         this.isLoading = false;
+        setTimeout(() => this.messageInput?.nativeElement.focus(), 0);
       },
       error: (err) => {
         this.messages.push({
@@ -74,6 +79,7 @@ export class ChatBubbleComponent implements AfterViewChecked {
           timestamp: new Date()
         });
         this.isLoading = false;
+        setTimeout(() => this.messageInput?.nativeElement.focus(), 0);
         console.error('Chat error:', err);
       }
     });
@@ -104,9 +110,22 @@ export class ChatBubbleComponent implements AfterViewChecked {
     return this.username ? this.username.charAt(0).toUpperCase() : 'U';
   }
 
-  private scrollToBottom(): void {
+  onScroll(): void {
+    if (!this.messagesContainer) return;
+    const element = this.messagesContainer.nativeElement;
+    // Check if user has scrolled up more than 50px from the bottom
+    const atBottom = element.scrollHeight - element.scrollTop - element.clientHeight <= 50;
+    this.isUserScrolledUp = !atBottom;
+  }
+
+  forceScrollToBottom(): void {
+    this.isUserScrolledUp = false;
+    this.scrollToBottom(true);
+  }
+
+  private scrollToBottom(force: boolean = false): void {
     try {
-      if (this.messagesContainer) {
+      if (this.messagesContainer && (!this.isUserScrolledUp || force)) {
         this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
       }
     } catch (err) {}

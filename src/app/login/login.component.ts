@@ -45,11 +45,27 @@ export class LoginComponent {
         // If error, bring the panels back
         this.clipRemoved = false;
         this.animateOut = false;
-        alert('Login failed: ' + err.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Authentication Error',
+          text: 'Invalid email or password. Please try again.',
+          confirmButtonText: 'Try Again',
+          timer: 5000,
+          timerProgressBar: true,
+          background: 'rgba(15, 30, 45, 0.95)',
+          color: '#ffffff',
+          backdrop: `rgba(0,0,0,0.4)`,
+          customClass: {
+            popup: 'swal2-dark-glass',
+            title: 'swal2-title',
+            confirmButton: 'swal2-confirm'
+          }
+        });
       }
     });
   }
   isSignup = false;
+
   switchToSignup() { this.isSignup = true; }
 
   switchToLogin() {
