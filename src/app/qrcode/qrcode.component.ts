@@ -33,8 +33,6 @@ export class QrcodeComponent implements OnInit {
         next: (res) => {
           this.qrData = res.otpAuthUrl;
           this.secret = res.secret;
-          console.log('QR generated for', this.email);
-          console.log('SECRET:', this.secret);
         },
         error: (err) => {
           this.showError('Failed to generate QR code. Please try logging in again.');

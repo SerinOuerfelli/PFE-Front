@@ -8,11 +8,13 @@ import { AnalyticsComponent } from '../analytics/analytics.component';
 import { RapportsComponent } from '../rapports/rapports.component';
 import { ThemeService } from '../services/theme.service';
 import { PredictionComponent } from '../prediction/prediction.component';
+import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, ChatbotComponent, ChatBubbleComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })
