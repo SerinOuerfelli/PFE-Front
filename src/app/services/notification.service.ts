@@ -53,7 +53,7 @@ export class NotificationService implements OnDestroy {
     }
   }
 
-    private mockUnreadOffset = 0;
+
 
   private fetchUpdates() {
     // Parallel fetch from all three AI endpoints
@@ -67,13 +67,9 @@ export class NotificationService implements OnDestroy {
       let rLen = recs ? recs.length : 0;
       let dLen = decs ? decs.length : 0;
 
-      // SIMULATION FIX: Always incrementally bump the lengths so the unread badges grow artificially.
-      // This forces the dynamic red notification badges to appear so you can test the UI!
-      this.mockUnreadOffset += 1;
-      
-      this.currentLengths.predictions = pLen + this.mockUnreadOffset;
-      this.currentLengths.recommendations = rLen + Math.floor(this.mockUnreadOffset / 3);
-      this.currentLengths.decisions = dLen + Math.floor(this.mockUnreadOffset / 5);
+      this.currentLengths.predictions = pLen;
+      this.currentLengths.recommendations = rLen;
+      this.currentLengths.decisions = dLen;
 
       this.calculateUnread();
     });

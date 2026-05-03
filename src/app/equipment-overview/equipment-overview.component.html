@@ -64,7 +64,12 @@
               <td>{{ eq.region }}</td>
               <td>
                 <span class="badge status-badge" 
-                      [ngClass]="eq.status === 'ACTIVE' ? 'status-active' : (eq.status === 'INACTIVE' ? 'status-inactive' : 'status-maintenance')">
+                      [ngClass]="{
+                        'status-active': eq.status === 'ACTIVE',
+                        'status-inactive': eq.status === 'INACTIVE',
+                        'status-maintenance': eq.status === 'MAINTENANCE',
+                        'status-out-of-service': eq.status === 'OUT_OF_SERVICE'
+                      }">
                   {{ eq.status }}
                 </span>
               </td>

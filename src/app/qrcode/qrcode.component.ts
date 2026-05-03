@@ -23,7 +23,7 @@ export class QrcodeComponent implements OnInit {
   codeDigits: string[] = ["", "", "", "", "", ""];
   code: string = "";
 
-  constructor(private twoFactorAuthService: TwoFactorAuthService,private router: Router) {}
+  constructor(private twoFactorAuthService: TwoFactorAuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.email = localStorage.getItem('email') || '';
@@ -55,17 +55,17 @@ export class QrcodeComponent implements OnInit {
         next: () => {
           const role = localStorage.getItem('role');
 
-              if (role === 'ADMIN') {
-          this.router.navigate(['/admin-dashboard']);
-        } else if (role === 'USER') {
-          this.router.navigate(['/user-dashboard']);
-        } else if (role === 'SUPERADMIN') {
-          this.router.navigate(['/superadmin-dashboard']);
-        } 
-        
-        else {
-          this.router.navigate(['/login-dashboard']);
-        }
+          if (role === 'SUPERVISOR') {
+            this.router.navigate(['/supervisor-dashboard']);
+          } else if (role === 'TECHNICIAN') {
+            this.router.navigate(['/technician-dashboard']);
+          } else if (role === 'ADMIN') {
+            this.router.navigate(['/admin-dashboard']);
+          }
+
+          else {
+            this.router.navigate(['/login-dashboard']);
+          }
         },
         error: (err) => {
           console.log(err);

@@ -21,7 +21,7 @@ import { AgentService } from '../services/agent.service';
   styleUrl: './user-dashboard.component.css'
 })
 export class UserDashboardComponent {
-  activeItem: string = 'My Dashboard';
+  activeItem: string = 'Dashboard Overview';
   currentContent: string = 'useroverview';
   kpis: any;
 

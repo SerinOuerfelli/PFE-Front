@@ -34,7 +34,7 @@
       <div class="card-glow"></div>
       
       <div class="card-header">
-        <div class="user-avatar" [ngClass]="dec.user.role === 'SUPERADMIN' ? 'superadmin-avatar' : 'admin-avatar'">
+        <div class="user-avatar" [ngClass]="dec.user.role === 'ADMIN' ? 'superadmin-avatar' : 'admin-avatar'">
           {{ getInitials(dec.user.username) }}
         </div>
         <div class="user-meta">

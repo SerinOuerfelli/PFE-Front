@@ -76,15 +76,13 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   selectEquipment(id: number) {
     this.selectedEquipmentId = id;
     
-    // Ensure both panels are open so user sees bidirectional effects
     if (!this.mapOpen) this.toggleMap();
     if (!this.listOpen) this.toggleList();
 
-    // 1. Highlight map marker
     this.mapMarkers.forEach((marker, markerId) => {
       const eq = this.equipments.find(e => e.id === markerId);
       if (eq) {
-        let defaultColor = eq.status === 'ACTIVE' ? '#10b981' : (eq.status === 'INACTIVE' ? '#ef4444' : '#f59e0b');
+        let defaultColor = this.getStatusColor(eq.status);
         
         if (markerId === id) {
            marker.setStyle({ color: '#2563eb', fillColor: '#2563eb', radius: 14, fillOpacity: 1 });
@@ -95,13 +93,22 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       }
     });
 
-    // 2. Scroll table to item
     setTimeout(() => {
       const row = document.getElementById(`eq-row-${id}`);
       if (row) {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 150);
+  }
+
+  private getStatusColor(status: string): string {
+    switch (status) {
+      case 'ACTIVE': return '#10b981';
+      case 'INACTIVE': return '#ef4444';
+      case 'MAINTENANCE': return '#f59e0b';
+      case 'OUT_OF_SERVICE': return '#6366f1';
+      default: return '#94a3b8'; // Slate/Gray for unknown
+    }
   }
 
   private initMap() {
@@ -150,7 +157,7 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
 
     this.equipments.forEach(eq => {
       if (eq.latitude && eq.longitude) {
-        let color = eq.status === 'ACTIVE' ? '#10b981' : (eq.status === 'INACTIVE' ? '#ef4444' : '#f59e0b');
+        let color = this.getStatusColor(eq.status);
         const circle = L.circleMarker([eq.latitude, eq.longitude], {
           color: color,
           fillColor: color,

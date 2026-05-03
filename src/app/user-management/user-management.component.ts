@@ -17,7 +17,7 @@ export class UserManagementComponent implements OnInit {
   users: User[] = [];
   loading: boolean = true;
   searchQuery: string = '';
-  
+
   // Modal State
   isModalOpen: boolean = false;
   isEditMode: boolean = false;
@@ -26,14 +26,14 @@ export class UserManagementComponent implements OnInit {
     username: '',
     email: '',
     password: '',
-    role: 'USER',
+    role: 'TECHNICIAN',
     active: true
   };
 
   constructor(
     private usersService: UsersService,
     public themeService: ThemeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchUsers();
@@ -56,8 +56,8 @@ export class UserManagementComponent implements OnInit {
 
   get filteredUsers(): User[] {
     const q = this.searchQuery.toLowerCase();
-    return this.users.filter(u => 
-      u.username.toLowerCase().includes(q) || 
+    return this.users.filter(u =>
+      u.username.toLowerCase().includes(q) ||
       u.email.toLowerCase().includes(q) ||
       u.role.toLowerCase().includes(q)
     );
@@ -66,7 +66,7 @@ export class UserManagementComponent implements OnInit {
   toggleUserStatus(user: User): void {
     const action = user.active ? 'deactivate' : 'activate';
     const statusText = user.active ? 'deactivated' : 'activated';
-    
+
     Swal.fire({
       title: `Are you sure?`,
       text: `Do you want to ${action} user ${user.username}?`,
@@ -77,10 +77,10 @@ export class UserManagementComponent implements OnInit {
       confirmButtonText: `Yes, ${action}!`
     }).then((result) => {
       if (result.isConfirmed) {
-        const obs = user.active 
-          ? this.usersService.deactivateUser(user.userId) 
+        const obs = user.active
+          ? this.usersService.deactivateUser(user.userId)
           : this.usersService.activateUser(user.userId);
-          
+
         obs.subscribe({
           next: () => {
             user.active = !user.active;
@@ -130,7 +130,7 @@ export class UserManagementComponent implements OnInit {
       username: '',
       email: '',
       password: '',
-      role: 'USER',
+      role: 'TECHNICIAN',
       active: true
     };
   }

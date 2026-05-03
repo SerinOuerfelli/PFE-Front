@@ -43,42 +43,42 @@
           </thead>
           <tbody>
             <ng-container *ngFor="let rec of paginatedRecommendations">
-              <tr class="main-row" [class.expanded]="isExpanded(rec.recommendationId)" (click)="toggleExpand(rec.recommendationId)">
+              <tr class="main-row" [class.expanded]="isExpanded(rec.recommendationId)"
+                (click)="toggleExpand(rec.recommendationId)">
                 <td class="expand-cell">
                   <span class="expand-icon" [class.rotated]="isExpanded(rec.recommendationId)">❯</span>
                 </td>
-              <td>
-                <div class="id-wrapper">
-                  <span class="id-hash">#</span><span class="id-text">{{ rec.recommendationId || 'N/A' }}</span>
-                </div>
-              </td>
-              <td>
-                <div class="id-wrapper">
-                  <span class="id-hash">#</span><span class="id-text">{{ rec.predictionId || 'N/A' }}</span>
-                </div>
-              </td>
-              <td>
-                <div class="action-cell">
+                <td>
+                  <div class="id-wrapper">
+                    <span class="id-hash">#</span><span class="id-text">{{ rec.recommendationId || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="id-wrapper">
+                    <span class="id-hash">#</span><span class="id-text">{{ rec.predictionId || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="action-cell">
                     <span class="action-text">{{ rec.description || '-' }}</span>
-                </div>
-              </td>
-              <td>
-                <div class="priority-actions">
-                  <span class="priority-badge" [ngClass]="{
+                  </div>
+                </td>
+                <td>
+                  <div class="priority-actions">
+                    <span class="priority-badge" [ngClass]="{
                       'priority-critical': rec.priority === 'CRITICAL',
                       'priority-high': rec.priority === 'HIGH',
                       'priority-medium': rec.priority === 'MEDIUM' || rec.priority === 'LOW'
                   }">
-                    {{ rec.priority || 'LOW' }}
-                  </span>
-                  
-                  <button *ngIf="!rec.decisions || rec.decisions.length === 0" 
-                          class="take-action-btn" 
-                          (click)="openDecisionModal(rec); $event.stopPropagation()">
-                    Take Action
-                  </button>
-                </div>
-              </td>
+                      {{ rec.priority || 'LOW' }}
+                    </span>
+
+                    <button *ngIf="!rec.decisions || rec.decisions.length === 0" class="take-action-btn"
+                      (click)="openDecisionModal(rec); $event.stopPropagation()">
+                      Take Action
+                    </button>
+                  </div>
+                </td>
               </tr>
 
               <!-- Expanded Decisions Row -->
@@ -90,12 +90,13 @@
                       <div class="decision-card" *ngFor="let dec of rec.decisions">
                         <div class="dec-header">
                           <div class="user-info">
-                            <div class="user-avatar" [style.background-color]="dec.user?.role === 'SUPERADMIN' ? '#2563eb' : '#64748b'">
-                                {{ getInitials(dec.user?.username || 'U') }}
+                            <div class="user-avatar"
+                              [style.background-color]="dec.user?.role === 'SUPERADMIN' ? '#2563eb' : '#64748b'">
+                              {{ getInitials(dec.user?.username || 'U') }}
                             </div>
                             <div class="user-text">
-                                <span class="username">{{ dec.user?.username }}</span>
-                                <span class="user-role">{{ dec.user?.role }}</span>
+                              <span class="username">{{ dec.user?.username }}</span>
+                              <span class="user-role">{{ dec.user?.role }}</span>
                             </div>
                           </div>
                           <div class="dec-date">{{ dec.decisionDate | date:'MMM dd, HH:mm' }}</div>
@@ -123,11 +124,13 @@
 
       <!-- Pagination Controls -->
       <div class="pagination-footer" *ngIf="totalPages > 1">
-        <p class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ mathMin(currentPage * pageSize, filteredRecommendations.length) }} of {{ filteredRecommendations.length }} results</p>
+        <p class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ mathMin(currentPage * pageSize,
+          filteredRecommendations.length) }} of {{ filteredRecommendations.length }} results</p>
         <div class="pagination-controls">
           <button class="btn-icon" [disabled]="currentPage === 1" (click)="prevPage()">&laquo; Prev</button>
           <div class="page-numbers">
-            <button class="page-btn" *ngFor="let p of [].constructor(totalPages); let i = index" [class.active]="currentPage === (i + 1)" (click)="setPage(i + 1)">{{ i + 1 }}</button>
+            <button class="page-btn" *ngFor="let p of [].constructor(totalPages); let i = index"
+              [class.active]="currentPage === (i + 1)" (click)="setPage(i + 1)">{{ i + 1 }}</button>
           </div>
           <button class="btn-icon" [disabled]="currentPage === totalPages" (click)="nextPage()">Next &raquo;</button>
         </div>
@@ -148,22 +151,21 @@
 
       <div class="modal-body">
         <div class="rec-context" *ngIf="selectedRecommendation">
-           <span class="context-label">Context:</span>
-           <span class="context-text">{{ selectedRecommendation.description }}</span>
+          <span class="context-label">Context:</span>
+          <span class="context-text">{{ selectedRecommendation.description }}</span>
         </div>
 
         <div class="form-group">
           <label for="decisionDesc">How would you like to handle this anomaly?</label>
-          <textarea id="decisionDesc" 
-                    [(ngModel)]="newDecisionDescription" 
-                    placeholder="Enter thorough action steps or decision details..."
-                    rows="4"></textarea>
+          <textarea id="decisionDesc" [(ngModel)]="newDecisionDescription"
+            placeholder="Enter thorough action steps or decision details..." rows="4"></textarea>
         </div>
       </div>
 
       <div class="modal-footer">
         <button class="btn-secondary" (click)="closeModal()" [disabled]="isSubmitting">Cancel</button>
-        <button class="btn-primary" (click)="submitDecision()" [disabled]="isSubmitting || !newDecisionDescription.trim()">
+        <button class="btn-primary" (click)="submitDecision()"
+          [disabled]="isSubmitting || !newDecisionDescription.trim()">
           <span *ngIf="!isSubmitting">Confirm Decision</span>
           <span *ngIf="isSubmitting" class="mini-spinner"></span>
         </button>

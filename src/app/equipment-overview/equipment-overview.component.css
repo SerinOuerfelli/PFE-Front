@@ -210,6 +210,11 @@
   color: #f59e0b;
 }
 
+.status-out-of-service {
+  background: rgba(99, 102, 241, 0.2);
+  color: #6366f1;
+}
+
 .state-box {
   background: var(--glass-bg);
   border-radius: 20px;
