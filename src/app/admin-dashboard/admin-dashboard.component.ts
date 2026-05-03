@@ -16,6 +16,8 @@ import { MetricsComponent } from '../metrics/metrics.component';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 
+import { AgentService } from '../services/agent.service';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
@@ -33,12 +35,33 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   
   unread: UnreadCounts = { predictions: 0, recommendations: 0, decisions: 0, total: 0 };
 
+  retrainLoading = false;
+  retrainMessage = '';
+
   constructor(
     private router: Router,
     private kpiService: KpiService,
     public themeService: ThemeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private agentService: AgentService
   ) {}
+
+  onRetrain(): void {
+    this.retrainLoading = true;
+    this.retrainMessage = 'AI is learning from live data...';
+    
+    this.agentService.retrainModel().subscribe({
+      next: (res) => {
+        this.retrainMessage = 'AI retrained successfully!';
+        this.retrainLoading = false;
+        setTimeout(() => this.retrainMessage = '', 3000);
+      },
+      error: (err) => {
+        this.retrainMessage = 'Error connecting to AI agent.';
+        this.retrainLoading = false;
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.kpiService.getKpis().subscribe(data => {

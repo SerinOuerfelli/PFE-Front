@@ -108,7 +108,13 @@
     <!-- Right section (topbar + main content) -->
     <div class="right-section">
       <div class="topbar">
-        <!-- Add topbar content here -->
+        <div class="ai-controls">
+          <button (click)="onRetrain()" [disabled]="retrainLoading" class="retrain-btn">
+            <i class="fas fa-brain"></i>
+            {{ retrainLoading ? 'Learning...' : 'Retrain AI Model' }}
+          </button>
+          <span class="retrain-status" *ngIf="retrainMessage">{{ retrainMessage }}</span>
+        </div>
       </div>
 
       <div class="main-content">
