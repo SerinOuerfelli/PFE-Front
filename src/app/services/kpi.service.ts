@@ -28,4 +28,12 @@ export class KpiService {
     const headers = this.createAuthHeaders();
     return this.http.get<any>(this.apiUrl, { headers });
   }
+
+  downloadPerformanceReport(): Observable<Blob> {
+    const headers = this.createAuthHeaders();
+    return this.http.get(`http://localhost:8080/api/reports/performance/download`, {
+      headers,
+      responseType: 'blob'
+    });
+  }
 }

@@ -19,64 +19,173 @@
     <p>Retrieving equipment geo-data...</p>
   </div>
 
-  <!-- Map Dropdown / Section -->
-  <div class="collapsible-section" [class.open]="mapOpen" *ngIf="!loading">
-    <div class="section-header" (click)="toggleMap()">
-      <h3>Geographic Context</h3>
-      <span class="chevron" [class.rotated]="mapOpen">▼</span>
-    </div>
-    <div class="section-content" [style.max-height]="mapOpen ? '600px' : '0'">
-      <div class="map-wrapper">
-        <div #mapElement class="leaflet-map-element"></div>
+  <div class="split-view-layout" *ngIf="!loading">
+    
+    <!-- Left Panel: Map -->
+    <div class="map-panel" [class.collapsed]="!mapOpen">
+      <div class="panel-header" (click)="toggleMap()">
+        <h3><span class="icon">🗺️</span> Geographic Context</h3>
+        <span class="chevron" [class.rotated]="mapOpen">▼</span>
+      </div>
+      <div class="panel-content">
+        <div class="map-wrapper">
+          <div #mapElement class="leaflet-map-element"></div>
+        </div>
       </div>
     </div>
+
+    <!-- Right Panel: List -->
+    <div class="list-panel" [class.collapsed]="!listOpen">
+      <div class="panel-header" (click)="toggleList()">
+        <h3><span class="icon">📋</span> Equipment Registry</h3>
+        <span class="chevron" [class.rotated]="listOpen">▼</span>
+      </div>
+      <div class="panel-content">
+        <div class="table-wrapper">
+          <table class="equipment-table">
+            <thead>
+              <tr>
+                <th>Ref</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Incidents</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let eq of equipments"
+                  id="eq-row-{{ eq.id }}"
+                  (click)="selectEquipment(eq.id)"
+                  [class.selected-row]="selectedEquipmentId === eq.id">
+                <td class="font-mono"><strong>{{ eq.reference }}</strong></td>
+                <td><span class="badge type-badge">{{ eq.type }}</span></td>
+                <td>
+                  <div class="loc-text">{{ eq.city }}</div>
+                  <div class="loc-sub">{{ eq.area }}</div>
+                </td>
+                <td>
+                  <span class="badge status-badge" 
+                        [ngClass]="{
+                          'status-active': eq.status === 'ACTIVE',
+                          'status-inactive': eq.status === 'INACTIVE',
+                          'status-maintenance': eq.status === 'MAINTENANCE',
+                          'status-out-of-service': eq.status === 'OUT_OF_SERVICE'
+                        }">
+                    {{ eq.status }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge incident-badge" *ngIf="eq.incidentCount && eq.incidentCount > 0">
+                    {{ eq.incidentCount }}
+                  </span>
+                  <span class="text-muted small" *ngIf="!eq.incidentCount || eq.incidentCount === 0">
+                    None
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- List Dropdown / Section -->
-  <div class="collapsible-section" [class.open]="listOpen" *ngIf="!loading">
-    <div class="section-header" (click)="toggleList()">
-      <h3>Equipment Registry Details</h3>
-      <span class="chevron" [class.rotated]="listOpen">▼</span>
-    </div>
-    <div class="section-content" [style.max-height]="listOpen ? '800px' : '0'">
-      <div class="table-wrapper">
-        <table class="equipment-table">
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Type</th>
-              <th>City</th>
-              <th>Area</th>
-              <th>Region</th>
-              <th>Status</th>
-              <th>Coordinates</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let eq of equipments"
-                id="eq-row-{{ eq.id }}"
-                (click)="selectEquipment(eq.id)"
-                [class.selected-row]="selectedEquipmentId === eq.id">
-              <td class="font-mono"><strong>{{ eq.reference }}</strong></td>
-              <td><span class="badge type-badge">{{ eq.type }}</span></td>
-              <td>{{ eq.city }}</td>
-              <td>{{ eq.area }}</td>
-              <td>{{ eq.region }}</td>
-              <td>
-                <span class="badge status-badge" 
-                      [ngClass]="{
-                        'status-active': eq.status === 'ACTIVE',
-                        'status-inactive': eq.status === 'INACTIVE',
-                        'status-maintenance': eq.status === 'MAINTENANCE',
-                        'status-out-of-service': eq.status === 'OUT_OF_SERVICE'
-                      }">
-                  {{ eq.status }}
-                </span>
-              </td>
-              <td class="font-mono coords-muted">{{ eq.latitude | number:'1.2-4' }}, {{ eq.longitude | number:'1.2-4' }}</td>
-            </tr>
-          </tbody>
-        </table>
+  <!-- Detailed Info Panel (Appears on Selection) -->
+  <div class="detail-panel-overlay" *ngIf="selectedEquipment" (click)="clearSelection()">
+    <div class="detail-panel" (click)="$event.stopPropagation()">
+      <div class="detail-header">
+        <div class="header-left">
+          <span class="detail-icon">{{ selectedEquipment.type === 'DAB' ? '🏧' : '💳' }}</span>
+          <div>
+            <div class="detail-title-row">
+              <h2>{{ selectedEquipment.reference }}</h2>
+              <span class="badge incident-badge-mini" *ngIf="selectedEquipment.incidentCount">
+                {{ selectedEquipment.incidentCount }} Pannes
+              </span>
+            </div>
+            <p>{{ selectedEquipment.type }} Terminal</p>
+          </div>
+        </div>
+        <button class="close-btn" (click)="clearSelection()">✕</button>
+      </div>
+
+      <div class="detail-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Operational Status</label>
+            <div class="value">
+              <select class="status-select" 
+                      [ngModel]="selectedEquipment.status"
+                      (ngModelChange)="changeStatus($event)"
+                      [ngClass]="'status-' + selectedEquipment.status.toLowerCase().replace('_', '-')">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="INACTIVE">INACTIVE</option>
+                <option value="MAINTENANCE">MAINTENANCE</option>
+                <option value="OUT_OF_SERVICE">OUT OF SERVICE</option>
+              </select>
+            </div>
+          </div>
+          <div class="info-item">
+            <label>Geographic Region</label>
+            <div class="value">{{ selectedEquipment.region }}</div>
+          </div>
+          <div class="info-item">
+            <label>City & Area</label>
+            <div class="value">{{ selectedEquipment.city }}, {{ selectedEquipment.area }}</div>
+          </div>
+          <div class="info-item">
+            <label>Precision Coordinates</label>
+            <div class="value font-mono">{{ selectedEquipment.latitude }}, {{ selectedEquipment.longitude }}</div>
+          </div>
+          <div class="info-item">
+            <label>Network ID</label>
+            <div class="value font-mono">NET-{{ selectedEquipment.reference.split('-')[1] }}</div>
+          </div>
+        </div>
+
+        <div class="technical-section" *ngIf="selectedEquipment.lastMaintenanceDate || selectedEquipment.hardwareVersion">
+          <h3>Technical Context</h3>
+          <div class="tech-card">
+            <div class="tech-row" *ngIf="selectedEquipment.lastMaintenanceDate">
+              <span>Last Maintenance</span>
+              <strong>{{ selectedEquipment.lastMaintenanceDate | date:'mediumDate' }}</strong>
+            </div>
+            <div class="tech-row" *ngIf="selectedEquipment.hardwareVersion">
+              <span>Hardware Version</span>
+              <strong>{{ selectedEquipment.hardwareVersion }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="technical-section">
+          <h3>Incident History (Pannes)</h3>
+          <div *ngIf="loadingIncidents" class="loading-mini">
+            <div class="spinner-mini"></div>
+            <span>Loading pannes...</span>
+          </div>
+          <div *ngIf="!loadingIncidents && incidents.length === 0" class="empty-state-mini">
+            No incidents recorded for this equipment.
+          </div>
+          <div class="incidents-list" *ngIf="!loadingIncidents && incidents.length > 0">
+            <div class="incident-card" *ngFor="let incident of incidents">
+              <div class="incident-header">
+                <span class="incident-metric">{{ incident.metricName }}</span>
+                <span class="badge status-out-of-service">{{ incident.level }}</span>
+              </div>
+              <div class="incident-details">
+                <span>Value: {{ incident.value }} {{ incident.unit }}</span>
+                <span class="incident-date">{{ incident.measureDate | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="detail-footer">
+        <button class="action-btn primary">Generate Full Report</button>
+        <button class="action-btn" (click)="clearSelection()">Dismiss</button>
       </div>
     </div>
   </div>

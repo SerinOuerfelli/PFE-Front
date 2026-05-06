@@ -7,8 +7,16 @@
         <div class="header-badge">LIVE</div>
         <div>
           <h2>Dashboard Overview</h2>
-          <p class="subtitle">Performance overview · Smart Monitor</p>
+          <div class="subtitle-wrap">
+            <p class="subtitle">Performance overview · Smart Monitor</p>
+          </div>
         </div>
+      </div>
+      <div class="header-right">
+        <button class="download-report-btn" (click)="downloadReport()" [disabled]="downloading">
+          <span class="btn-icon">{{ downloading ? '⏳' : '📥' }}</span>
+          {{ downloading ? 'Generating...' : 'Download Full Report' }}
+        </button>
       </div>
     </div>
 

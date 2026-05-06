@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EquipmentService, Equipment } from '../services/equipment.service';
 import { ThemeService } from '../services/theme.service';
+import { Subscription, interval, startWith, switchMap } from 'rxjs';
 import * as L from 'leaflet';
 
 @Component({
@@ -18,7 +19,14 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   mapOpen = true;
   listOpen = true;
   selectedEquipmentId: number | null = null;
+  incidents: any[] = [];
+  loadingIncidents = false;
   private mapMarkers: Map<number, L.CircleMarker> = new Map();
+  private pollingSub?: Subscription;
+
+  get selectedEquipment(): Equipment | undefined {
+    return this.equipments.find(e => e.id === this.selectedEquipmentId);
+  }
 
   private map: L.Map | undefined;
 
@@ -30,10 +38,19 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   ) {}
 
   ngOnInit() {
-    this.equipmentService.getEquipmentGeoData().subscribe(data => {
-      this.equipments = data;
-      this.loading = false;
-    });
+    this.pollingSub = interval(10000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.equipmentService.getEquipmentGeoData())
+      )
+      .subscribe({
+        next: (data) => {
+          this.equipments = data;
+          this.loading = false;
+          this.updateMarkers();
+        },
+        error: (err) => console.error('Equipment poll error:', err)
+      });
   }
 
   ngAfterViewInit() {
@@ -57,24 +74,61 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
     if (this.map) {
       this.map.remove();
     }
+    this.pollingSub?.unsubscribe();
+  }
+
+  private updateMarkers() {
+    if (!this.map || !this.mapMarkers.size) return;
+
+    this.equipments.forEach(eq => {
+      const marker = this.mapMarkers.get(eq.id);
+      if (marker) {
+        const color = this.getStatusColor(eq.status);
+        marker.setStyle({ color: color, fillColor: color });
+        marker.setPopupContent(`<b>${eq.reference}</b><br>${eq.type} - ${eq.city}<br>Status: ${eq.status}`);
+      }
+    });
   }
 
   toggleMap() {
     this.mapOpen = !this.mapOpen;
-    if (this.mapOpen) {
-      setTimeout(() => {
+    if (!this.mapOpen && !this.listOpen) this.listOpen = true; // Ensure at least one is open
+    setTimeout(() => {
+      if (this.mapOpen) {
         if (!this.map) this.initMap();
         else this.map.invalidateSize();
-      }, 300);
-    }
+      }
+    }, 500); // Wait for CSS transition
   }
 
   toggleList() {
     this.listOpen = !this.listOpen;
+    if (!this.listOpen && !this.mapOpen) {
+      this.mapOpen = true;
+      setTimeout(() => {
+        if (!this.map) this.initMap();
+        else this.map.invalidateSize();
+      }, 500);
+    } else if (this.mapOpen) {
+      setTimeout(() => this.map?.invalidateSize(), 500);
+    }
   }
 
   selectEquipment(id: number) {
     this.selectedEquipmentId = id;
+    this.incidents = [];
+    this.loadingIncidents = true;
+
+    this.equipmentService.getEquipmentIncidents(id).subscribe({
+      next: (data) => {
+        this.incidents = data;
+        this.loadingIncidents = false;
+      },
+      error: (err) => {
+        console.error('Failed to load incidents:', err);
+        this.loadingIncidents = false;
+      }
+    });
     
     if (!this.mapOpen) this.toggleMap();
     if (!this.listOpen) this.toggleList();
@@ -99,6 +153,26 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 150);
+  }
+
+  clearSelection() {
+    this.selectedEquipmentId = null;
+  }
+
+  changeStatus(newStatus: string) {
+    if (this.selectedEquipmentId) {
+      this.equipmentService.updateStatus(this.selectedEquipmentId, newStatus).subscribe({
+        next: (updated) => {
+          // Update local state immediately
+          const index = this.equipments.findIndex(e => e.id === updated.id);
+          if (index !== -1) {
+            this.equipments[index].status = updated.status;
+            this.updateMarkers();
+          }
+        },
+        error: (err) => console.error('Failed to update status:', err)
+      });
+    }
   }
 
   private getStatusColor(status: string): string {

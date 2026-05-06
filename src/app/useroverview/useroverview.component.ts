@@ -3,6 +3,7 @@ import { KpiService } from '../services/kpi.service';
 import { Chart, registerables } from 'chart.js';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../services/theme.service';
+import { Subscription, interval, startWith, switchMap } from 'rxjs';
 
 Chart.register(...registerables);
 
@@ -16,6 +17,8 @@ Chart.register(...registerables);
 export class UserOverviewComponent implements OnInit {
   kpis: any;
   isNightMode: boolean = false;
+  downloading: boolean = false;
+  private pollingSub?: Subscription;
 
   get topClientsEntries(): [string, number][] {
     if (!this.kpis?.TopClientsByTransactions) return [];
@@ -30,7 +33,7 @@ export class UserOverviewComponent implements OnInit {
       .sort((a, b) => a[0].localeCompare(b[0])) as [string, number][];
   }
 
-  constructor(private kpiService: KpiService, public themeService: ThemeService) {}
+  constructor(private kpiService: KpiService, public themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.themeService.nightMode$.subscribe(isNight => {
@@ -38,10 +41,23 @@ export class UserOverviewComponent implements OnInit {
       if (this.kpis) this.renderAllCharts(isNight);
     });
 
-    this.kpiService.getKpis().subscribe(data => {
-      this.kpis = data;
-      setTimeout(() => this.renderAllCharts(this.isNightMode), 0);
-    });
+    // Start 10s polling for real-time data
+    this.pollingSub = interval(10000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.kpiService.getKpis())
+      )
+      .subscribe({
+        next: (data) => {
+          this.kpis = data;
+          setTimeout(() => this.renderAllCharts(this.isNightMode), 0);
+        },
+        error: (err) => console.error('Failed to poll KPIs:', err)
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.pollingSub?.unsubscribe();
   }
 
   private renderAllCharts(isNight: boolean) {
@@ -257,5 +273,39 @@ export class UserOverviewComponent implements OnInit {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  downloadReport() {
+    this.downloading = true;
+    this.kpiService.downloadPerformanceReport().subscribe({
+      next: (blob) => {
+        if (blob.size < 100) {
+          console.error('Downloaded file is too small, possible error:', blob);
+          this.downloading = false;
+          alert('Failed to generate a valid PDF. Please check server logs.');
+          return;
+        }
+
+        // Explicitly create a PDF blob to be safe
+        const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(pdfBlob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Performance_Report_${new Date().getTime()}.pdf`;
+
+        document.body.appendChild(link); // Required for some browsers
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url);
+        this.downloading = false;
+      },
+      error: (err) => {
+        console.error('Download failed:', err);
+        alert('Download failed. Make sure the backend is running with the new PDF dependencies.');
+        this.downloading = false;
+      }
+    });
   }
 }

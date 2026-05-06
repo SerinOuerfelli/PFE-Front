@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { KpiService } from '../services/kpi.service';
 import { CommonModule } from '@angular/common';
+import { Subscription, interval, startWith, switchMap } from 'rxjs';
 import { UserOverviewComponent } from '../useroverview/useroverview.component';
 import { FormsModule } from '@angular/forms';
 import { AnalyticsComponent } from '../analytics/analytics.component';
@@ -13,6 +14,7 @@ import { DecisionComponent } from '../decision/decision.component';
 import { EquipmentOverviewComponent } from '../equipment-overview/equipment-overview.component';
 import { NotificationService, UnreadCounts } from '../services/notification.service';
 import { UserManagementComponent } from '../user-management/user-management.component';
+import { MetricsComponent } from '../metrics/metrics.component';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 
@@ -21,7 +23,7 @@ import { AgentService } from '../services/agent.service';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, UserManagementComponent, ChatbotComponent, ChatBubbleComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, UserManagementComponent, MetricsComponent, ChatbotComponent, ChatBubbleComponent],
   templateUrl: './superadmin-dashboard.component.html',
   styleUrl: './superadmin-dashboard.component.css'
 })
@@ -37,6 +39,8 @@ export class SuperadminDashboardComponent implements OnInit, OnDestroy{
 
   retrainLoading = false;
   retrainMessage = '';
+
+  private kpiPollingSub?: Subscription;
 
   constructor(
     private router: Router,
@@ -64,9 +68,16 @@ export class SuperadminDashboardComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    this.kpiService.getKpis().subscribe(data => {
-      this.kpis = data;
-    });
+    // Polling for KPIs
+    this.kpiPollingSub = interval(10000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.kpiService.getKpis())
+      )
+      .subscribe({
+        next: (data) => this.kpis = data,
+        error: (err) => console.error('Dashboard KPI poll error:', err)
+      });
 
     this.username = localStorage.getItem('username');
     this.email = localStorage.getItem('email');
@@ -78,6 +89,7 @@ export class SuperadminDashboardComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.notificationService.stopPolling();
+    this.kpiPollingSub?.unsubscribe();
   }
 
   loadContent(target: string) {

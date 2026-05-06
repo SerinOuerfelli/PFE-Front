@@ -35,6 +35,10 @@
           [class.active]="activeItem === 'User Management'">
           <i class="fas fa-users-cog icon"></i> User Management
         </li>
+        <li (click)="setActive('Modify Metrics'); loadContent('metrics')"
+          [class.active]="activeItem === 'Modify Metrics'">
+          <i class="fas fa-edit icon"></i> Modify Metrics
+        </li>
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
           <i class="fas fa-robot icon"></i> ChatBot
         </li>
@@ -126,6 +130,7 @@
         <app-decision *ngIf="currentContent === 'decision-support'"></app-decision>
         <app-equipment-overview *ngIf="currentContent === 'Equipment Overview '"></app-equipment-overview>
         <app-user-management *ngIf="currentContent === 'usermanagement'"></app-user-management>
+        <app-metrics *ngIf="currentContent === 'metrics'"></app-metrics>
         <app-chatbot *ngIf="currentContent === 'chatbot'"></app-chatbot>
       </div>
     </div>
