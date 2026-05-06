@@ -23,6 +23,9 @@ export class AuthService {
 
   
   login(loginRequest: LoginRequestDTO): Observable<LoginResponse> {
+    if (loginRequest.email && !loginRequest.email.includes('@')) {
+      loginRequest.email += '@biat-it.com';
+    }
     return this.http.post<LoginResponse>(this.apiUrl, loginRequest);
   }
 

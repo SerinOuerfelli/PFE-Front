@@ -287,6 +287,25 @@
   border-bottom: 2px solid var(--table-border);
 }
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.sortable-th:hover {
+  background-color: var(--table-row-hover) !important;
+  color: var(--primary-blue);
+}
+
+.sort-icon {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  color: var(--primary-blue);
+  display: inline-block;
+  animation: fadeIn 0.3s ease-out;
+}
+
 .prediction-table tbody tr {
   transition: all 0.2s ease;
 }

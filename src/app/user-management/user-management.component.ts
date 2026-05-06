@@ -17,6 +17,8 @@ export class UserManagementComponent implements OnInit {
   users: User[] = [];
   loading: boolean = true;
   searchQuery: string = '';
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   // Modal State
   isModalOpen: boolean = false;
@@ -56,11 +58,44 @@ export class UserManagementComponent implements OnInit {
 
   get filteredUsers(): User[] {
     const q = this.searchQuery.toLowerCase();
-    return this.users.filter(u =>
+    const filtered = this.users.filter(u =>
       u.username.toLowerCase().includes(q) ||
       u.email.toLowerCase().includes(q) ||
       u.role.toLowerCase().includes(q)
     );
+    return this.applySorting(filtered);
+  }
+
+  sortBy(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  private applySorting(data: User[]): User[] {
+    if (!this.sortColumn) return data;
+
+    return [...data].sort((a, b) => {
+      let valA: any = this.getPropertyValue(a, this.sortColumn);
+      let valB: any = this.getPropertyValue(b, this.sortColumn);
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  private getPropertyValue(obj: any, column: string): any {
+    switch (column) {
+      case 'username': return obj.username || '';
+      case 'email': return obj.email || '';
+      case 'status': return obj.active ? 1 : 0;
+      case 'role': return obj.role || '';
+      default: return '';
+    }
   }
 
   toggleUserStatus(user: User): void {
@@ -112,7 +147,7 @@ export class UserManagementComponent implements OnInit {
     // Clone user details into the form model (prevent unintended auto-binding to table)
     this.newUser = {
       username: user.username,
-      email: user.email,
+      email: user.email.replace('@biat-it.com', ''),
       password: '', // We don't fetch passwords, so keep it empty. If they don't type a new one, don't update it.
       role: user.role,
       active: user.active
@@ -142,9 +177,15 @@ export class UserManagementComponent implements OnInit {
       return;
     }
 
+    // Ensure we send the full email to the service
+    const userToSave = { ...this.newUser };
+    if (!userToSave.email.includes('@')) {
+      userToSave.email = userToSave.email + '@biat-it.com';
+    }
+
     if (this.isEditMode && this.editingUserId) {
       // Update logic
-      this.usersService.updateUser(this.editingUserId, this.newUser as User).subscribe({
+      this.usersService.updateUser(this.editingUserId, userToSave as User).subscribe({
         next: () => {
           Swal.fire('Updated!', 'User profile modified successfully.', 'success');
           this.closeModal();
@@ -157,7 +198,7 @@ export class UserManagementComponent implements OnInit {
       });
     } else {
       // Create logic
-      this.usersService.addUser(this.newUser).subscribe({
+      this.usersService.addUser(userToSave as User).subscribe({
         next: () => {
           Swal.fire('Created!', 'New user added successfully.', 'success');
           this.closeModal();

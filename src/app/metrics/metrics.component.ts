@@ -17,6 +17,8 @@ export class MetricsComponent implements OnInit {
   metrics: Metric[] = [];
   filteredMetrics: Metric[] = [];
   searchTerm: string = '';
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   isModalOpen: boolean = false;
   isDeleteModalOpen: boolean = false;
@@ -50,10 +52,44 @@ export class MetricsComponent implements OnInit {
 
   applyFilter(): void {
     const term = this.searchTerm.toLowerCase();
-    this.filteredMetrics = this.metrics.filter(m =>
+    const filtered = this.metrics.filter(m =>
       (m.metricName ?? '').toLowerCase().includes(term) ||
       (m.unit ?? '').toLowerCase().includes(term)
     );
+    this.filteredMetrics = this.applySorting(filtered);
+  }
+
+  sortBy(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.applyFilter();
+  }
+
+  private applySorting(data: Metric[]): Metric[] {
+    if (!this.sortColumn) return data;
+
+    return [...data].sort((a, b) => {
+      let valA: any = this.getPropertyValue(a, this.sortColumn);
+      let valB: any = this.getPropertyValue(b, this.sortColumn);
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  private getPropertyValue(obj: any, column: string): any {
+    switch (column) {
+      case 'id': return obj.metricId || 0;
+      case 'name': return obj.metricName || '';
+      case 'value': return obj.threshold || 0;
+      case 'unit': return obj.unit || '';
+      default: return '';
+    }
   }
 
   openCreateModal(): void {

@@ -181,6 +181,25 @@ th {
   border-bottom: 1px solid var(--border-col);
 }
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.sortable-th:hover {
+  background: var(--row-hover);
+  color: var(--c-primary);
+}
+
+.sort-icon {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--c-primary);
+  display: inline-block;
+  animation: fadeUp 0.3s ease-out;
+}
+
 .actions-header {
   text-align: right;
   padding-right: 28px;
@@ -432,6 +451,47 @@ td {
   margin-bottom: 12px;
 }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ===== Email Input Group ===== */
+.email-input-group {
+  display: flex;
+  align-items: stretch;
+  background: var(--card-bg);
+  border: 1px solid var(--border-col);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.email-input-group:focus-within {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.email-input-group input {
+  flex: 1;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 12px 14px;
+  background: transparent;
+}
+
+.email-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--c-primary);
+  font-weight: 700;
+  font-size: 13px;
+  border-left: 1px solid var(--border-col);
+  user-select: none;
+}
+
+:host-context(.night-mode) .email-suffix {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+}
 
 /* ===== Modal ===== */
 .modal-backdrop {

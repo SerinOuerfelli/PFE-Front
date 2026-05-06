@@ -4,6 +4,16 @@
       <h1>Equipment Overview</h1>
       <p>Tracking DAB/TPE operational contexts geographically</p>
     </div>
+
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" 
+             placeholder="Search by reference, city, or type..." 
+             [(ngModel)]="searchTerm"
+             (ngModelChange)="applyFiltersAndSorting()"
+             class="search-input" />
+    </div>
+
     <div class="header-toggles">
       <button class="toggle-btn" [class.active]="mapOpen" (click)="toggleMap()">
         <span class="icon">🗺️</span> Map View
@@ -45,11 +55,26 @@
           <table class="equipment-table">
             <thead>
               <tr>
-                <th>Ref</th>
-                <th>Type</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Incidents</th>
+                <th (click)="sortBy('reference')" class="sortable-header">
+                  Ref 
+                  <span class="sort-icon" *ngIf="sortColumn === 'reference'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th (click)="sortBy('type')" class="sortable-header">
+                  Type 
+                  <span class="sort-icon" *ngIf="sortColumn === 'type'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th (click)="sortBy('location')" class="sortable-header">
+                  Location 
+                  <span class="sort-icon" *ngIf="sortColumn === 'location'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th (click)="sortBy('status')" class="sortable-header">
+                  Status 
+                  <span class="sort-icon" *ngIf="sortColumn === 'status'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
+                <th (click)="sortBy('incidents')" class="sortable-header">
+                  Incidents 
+                  <span class="sort-icon" *ngIf="sortColumn === 'incidents'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                </th>
               </tr>
             </thead>
             <tbody>

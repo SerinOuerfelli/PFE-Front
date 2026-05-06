@@ -15,12 +15,16 @@ import * as L from 'leaflet';
 })
 export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   equipments: Equipment[] = [];
+  allEquipments: Equipment[] = [];
+  searchTerm: string = '';
   loading = true;
   mapOpen = true;
   listOpen = true;
   selectedEquipmentId: number | null = null;
   incidents: any[] = [];
   loadingIncidents = false;
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
   private mapMarkers: Map<number, L.CircleMarker> = new Map();
   private pollingSub?: Subscription;
 
@@ -45,7 +49,8 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       )
       .subscribe({
         next: (data) => {
-          this.equipments = data;
+          this.allEquipments = data;
+          this.applyFiltersAndSorting();
           this.loading = false;
           this.updateMarkers();
         },
@@ -153,6 +158,51 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 150);
+  }
+
+  sortBy(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.applyFiltersAndSorting();
+  }
+
+  applyFiltersAndSorting() {
+    const q = this.searchTerm.toLowerCase();
+    let filtered = this.allEquipments.filter(e => 
+      e.reference.toLowerCase().includes(q) ||
+      e.city.toLowerCase().includes(q) ||
+      e.area.toLowerCase().includes(q) ||
+      e.type.toLowerCase().includes(q)
+    );
+    this.equipments = this.applySorting(filtered);
+  }
+
+  private applySorting(data: Equipment[]): Equipment[] {
+    if (!this.sortColumn) return data;
+
+    return [...data].sort((a, b) => {
+      let valA: any = this.getPropertyValue(a, this.sortColumn);
+      let valB: any = this.getPropertyValue(b, this.sortColumn);
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  private getPropertyValue(obj: any, column: string): any {
+    switch (column) {
+      case 'reference': return obj.reference;
+      case 'type': return obj.type;
+      case 'location': return obj.city;
+      case 'status': return obj.status;
+      case 'incidents': return obj.incidentCount || 0;
+      default: return '';
+    }
   }
 
   clearSelection() {

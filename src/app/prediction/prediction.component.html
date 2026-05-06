@@ -35,11 +35,26 @@
           <thead>
             <tr>
               <th class="col-expand"></th>
-              <th class="col-id">Prediction ID</th>
-              <th class="col-date">Date</th>
-              <th class="col-type">Context / Type</th>
-              <th class="col-probability">Probability</th>
-              <th class="col-result">Result Status</th>
+              <th class="col-id sortable-th" (click)="sortBy('id')">
+                Prediction ID 
+                <span class="sort-icon" *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th class="col-date sortable-th" (click)="sortBy('date')">
+                Date 
+                <span class="sort-icon" *ngIf="sortColumn === 'date'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th class="col-type sortable-th" (click)="sortBy('type')">
+                Context / Type 
+                <span class="sort-icon" *ngIf="sortColumn === 'type'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th class="col-probability sortable-th" (click)="sortBy('probability')">
+                Probability 
+                <span class="sort-icon" *ngIf="sortColumn === 'probability'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th class="col-result sortable-th" (click)="sortBy('result')">
+                Result Status 
+                <span class="sort-icon" *ngIf="sortColumn === 'result'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+              </th>
             </tr>
           </thead>
           <tbody>

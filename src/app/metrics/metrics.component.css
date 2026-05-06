@@ -177,6 +177,25 @@ th {
   border-bottom: 1px solid var(--border-col);
 }
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.sortable-th:hover {
+  background: var(--row-hover);
+  color: var(--c-primary);
+}
+
+.sort-icon {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--c-primary);
+  display: inline-block;
+  animation: fadeUp 0.3s ease-out;
+}
+
 .data-row {
   transition: background 0.2s ease;
 }

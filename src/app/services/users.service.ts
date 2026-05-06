@@ -12,6 +12,13 @@ export class UsersService {
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) { }
 
+  private normalizeEmail(email: string | undefined): string | undefined {
+    if (email && !email.includes('@')) {
+      return email + '@biat-it.com';
+    }
+    return email;
+  }
+
   private createAuthHeaders(): HttpHeaders {
     let headers = new HttpHeaders();
     if (isPlatformBrowser(this.platformId)) {
@@ -29,11 +36,13 @@ export class UsersService {
   }
 
   addUser(user: User): Observable<string> {
+    user.email = this.normalizeEmail(user.email) || '';
     const headers = this.createAuthHeaders();
     return this.http.post(this.apiUrl + '/addUser', user, { headers, responseType: 'text' });
   }
 
   updateUser(id: number, user: User): Observable<User> {
+    user.email = this.normalizeEmail(user.email) || '';
     const headers = this.createAuthHeaders();
     return this.http.put<User>(`${this.apiUrl}/${id}`, user, { headers });
   }
@@ -49,7 +58,8 @@ export class UsersService {
   }
 
   findByEmail(email: string): Observable<User> {
+    const normalizedEmail = this.normalizeEmail(email);
     const headers = this.createAuthHeaders();
-    return this.http.get<User>(`${this.apiUrl}/email/${email}`, { headers });
+    return this.http.get<User>(`${this.apiUrl}/email/${normalizedEmail}`, { headers });
   }
 }

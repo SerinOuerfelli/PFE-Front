@@ -19,6 +19,8 @@ export class PredictionComponent implements OnInit {
   pageSize: number = 5;
   searchId: string = '';
   expandedPredictionIds: Set<number> = new Set();
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(private predictionService: PredictionService) { }
 
@@ -66,7 +68,41 @@ export class PredictionComponent implements OnInit {
 
   get paginatedPredictions(): Prediction[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.filteredPredictions.slice(startIndex, startIndex + this.pageSize);
+    const sorted = this.applySorting(this.filteredPredictions);
+    return sorted.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  sortBy(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+  }
+
+  private applySorting(data: Prediction[]): Prediction[] {
+    if (!this.sortColumn) return data;
+
+    return [...data].sort((a, b) => {
+      let valA: any = this.getPropertyValue(a, this.sortColumn);
+      let valB: any = this.getPropertyValue(b, this.sortColumn);
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  private getPropertyValue(obj: any, column: string): any {
+    switch (column) {
+      case 'id': return obj.predictionId || 0;
+      case 'date': return obj.predictionDate || '';
+      case 'type': return obj.predictionType || '';
+      case 'probability': return obj.probability || 0;
+      case 'result': return obj.predictionResult || '';
+      default: return '';
+    }
   }
 
   get totalPages(): number {

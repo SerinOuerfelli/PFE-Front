@@ -39,10 +39,18 @@
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Value</th>
-          <th>Unit</th>
+          <th (click)="sortBy('id')" class="sortable-th">
+            # <span class="sort-icon" *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th (click)="sortBy('name')" class="sortable-th">
+            Name <span class="sort-icon" *ngIf="sortColumn === 'name'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th (click)="sortBy('value')" class="sortable-th">
+            Value <span class="sort-icon" *ngIf="sortColumn === 'value'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
+          <th (click)="sortBy('unit')" class="sortable-th">
+            Unit <span class="sort-icon" *ngIf="sortColumn === 'unit'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
