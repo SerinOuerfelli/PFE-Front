@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecommendationService } from '../services/recommendation.service';
 import { Recommendation } from '../Model/Recommendation';
+import { Subscription, interval } from 'rxjs';
 import { DecisionService } from '../services/decision.service';
 import { Decision } from '../Model/Decision';
 import Swal from 'sweetalert2';
@@ -14,7 +15,7 @@ import Swal from 'sweetalert2';
   templateUrl: './recommendation.component.html',
   styleUrls: ['./recommendation.component.css']
 })
-export class RecommendationComponent implements OnInit {
+export class RecommendationComponent implements OnInit, OnDestroy {
   recommendations: Recommendation[] = [];
   loading: boolean = true;
   error: string | null = null;
@@ -22,6 +23,7 @@ export class RecommendationComponent implements OnInit {
   pageSize: number = 5;
   searchQuery: string = '';
   expandedRecommendationIds: Set<number> = new Set();
+  private pollingSub?: Subscription;
 
   // "Take Action" Modal State
   isModalOpen: boolean = false;
@@ -36,10 +38,20 @@ export class RecommendationComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchRecommendations();
+    // Silently poll for new recommendations every 5 seconds
+    this.pollingSub = interval(5000).subscribe(() => {
+      this.fetchRecommendations(true);
+    });
   }
 
-  fetchRecommendations(): void {
-    this.loading = true;
+  ngOnDestroy(): void {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+  }
+
+  fetchRecommendations(isSilent: boolean = false): void {
+    if (!isSilent) this.loading = true;
     this.error = null;
     this.recommendationService.getAllRecommendations().subscribe({
       next: (data) => {
@@ -68,14 +80,14 @@ export class RecommendationComponent implements OnInit {
         } else {
           this.recommendations = data;
         }
-        this.currentPage = 1;
-        this.loading = false;
+        if (!isSilent) this.currentPage = 1;
+        if (!isSilent) this.loading = false;
       },
       error: (err) => {
         console.error('Error fetching recommendations:', err);
         // Fallback or error display
         this.error = 'Failed to load recommendations. Please ensure the backend is running.';
-        this.loading = false;
+        if (!isSilent) this.loading = false;
       }
     });
   }

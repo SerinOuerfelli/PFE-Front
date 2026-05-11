@@ -20,22 +20,22 @@
       </div>
     </div>
 
-    <!-- ===== Stat Cards Row ===== -->
+    <!-- ===== Primary Stat Cards ===== -->
     <div class="stat-cards">
+
+      <div class="stat-card sky">
+        <div class="stat-icon">👥</div>
+        <div class="stat-body">
+          <span class="stat-label">Total Clients</span>
+          <span class="stat-value">{{kpis?.TotalClients}}</span>
+        </div>
+      </div>
 
       <div class="stat-card blue">
         <div class="stat-icon">💳</div>
         <div class="stat-body">
           <span class="stat-label">Avg Transaction</span>
           <span class="stat-value">{{kpis?.AverageTransactionAmount | number:'1.0-0'}} <small>TND</small></span>
-        </div>
-      </div>
-
-      <div class="stat-card indigo">
-        <div class="stat-icon">🧠</div>
-        <div class="stat-body">
-          <span class="stat-label">Avg Prediction Prob.</span>
-          <span class="stat-value">{{(kpis?.AveragePredictionProbability * 100) | number:'1.1-1'}}<small>%</small></span>
         </div>
       </div>
 
@@ -55,10 +55,23 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- ===== Secondary Stat Cards ===== -->
+    <div class="stat-cards">
+
+      <div class="stat-card indigo">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-body">
+          <span class="stat-label">AI Prediction Prob.</span>
+          <span class="stat-value">{{(kpis?.AveragePredictionProbability * 100) | number:'1.1-1'}}<small>%</small></span>
+        </div>
+      </div>
+
       <div class="stat-card red">
         <div class="stat-icon">🔴</div>
         <div class="stat-body">
-          <span class="stat-label">Critical Risk Rate</span>
+          <span class="stat-label">Critical Risk</span>
           <span class="stat-value">{{kpis?.CriticalRiskRate | number:'1.1-1'}}<small>%</small></span>
         </div>
       </div>
@@ -68,14 +81,6 @@
         <div class="stat-body">
           <span class="stat-label">Fraud Suspicion</span>
           <span class="stat-value">{{kpis?.FraudSuspicionRate | number:'1.1-1'}}<small>%</small></span>
-        </div>
-      </div>
-
-      <div class="stat-card sky">
-        <div class="stat-icon">👥</div>
-        <div class="stat-body">
-          <span class="stat-label">Active Clients</span>
-          <span class="stat-value">{{kpis?.ActiveClients}}</span>
         </div>
       </div>
 
@@ -89,22 +94,22 @@
 
     </div>
 
-    <!-- ===== Row 1: Transactions by Date + Channel Donut ===== -->
-    <div class="row-2col">
-
-      <div class="glass-card chart-card">
-        <div class="card-header">
-          <span class="card-title">📅 Transactions by Date</span>
-        </div>
-        <canvas id="txByDateChart"></canvas>
+    <!-- ===== Row 1: Transactions by Date (full width) ===== -->
+    <div class="glass-card chart-card">
+      <div class="card-header">
+        <span class="card-title">📅 Transactions by Date</span>
       </div>
+      <canvas id="txByDateChart"></canvas>
+    </div>
+
+    <!-- ===== Row 2: Channel Donut + Recommendations Donut + Top Clients ===== -->
+    <div class="row-3col">
 
       <div class="glass-card chart-card small">
         <div class="card-header">
-          <span class="card-title">📡 Transactions by Channel</span>
+          <span class="card-title">📡 By Channel</span>
         </div>
         <canvas id="channelChart"></canvas>
-        <!-- inline legend -->
         <div class="channel-legend" *ngIf="kpis?.TransactionsByChannel">
           <div class="cl-item" *ngFor="let entry of kpis.TransactionsByChannel | keyvalue">
             <span class="cl-label">{{entry.key}}</span>
@@ -113,21 +118,9 @@
         </div>
       </div>
 
-    </div>
-
-    <!-- ===== Row 2: System Rates Bar + Recommendations Donut ===== -->
-    <div class="row-2col">
-
-      <div class="glass-card chart-card">
-        <div class="card-header">
-          <span class="card-title">📊 System Rates Overview</span>
-        </div>
-        <canvas id="ratesChart"></canvas>
-      </div>
-
       <div class="glass-card chart-card small">
         <div class="card-header">
-          <span class="card-title">🎯 Recommendations by Priority</span>
+          <span class="card-title">🎯 By Priority</span>
         </div>
         <canvas id="recommendationsChart"></canvas>
         <div class="rec-legend" *ngIf="kpis?.RecommendationsByPriority">
@@ -139,21 +132,28 @@
         </div>
       </div>
 
-    </div>
-
-    <!-- ===== Row 3: Top Clients Bar + Rate list ===== -->
-    <div class="row-2col">
-
-      <div class="glass-card chart-card">
+      <div class="glass-card chart-card small">
         <div class="card-header">
-          <span class="card-title">🏆 Top Clients by Transactions</span>
+          <span class="card-title">🏆 Top Clients</span>
         </div>
         <canvas id="topClientsChart"></canvas>
       </div>
 
+    </div>
+
+    <!-- ===== Row 3: System Rates Bar + Rate Breakdown List ===== -->
+    <div class="row-2col">
+
+      <div class="glass-card chart-card">
+        <div class="card-header">
+          <span class="card-title">📊 System Rates Overview</span>
+        </div>
+        <canvas id="ratesChart"></canvas>
+      </div>
+
       <div class="glass-card rates-list-card">
         <div class="card-header">
-          <span class="card-title">📈 System Rates Breakdown</span>
+          <span class="card-title">📈 Health Breakdown</span>
         </div>
         <ul class="rates-list">
           <li>
@@ -208,6 +208,31 @@
         </ul>
       </div>
 
+    </div>
+
+    <!-- ===== Row 4: Recent System Activities ===== -->
+    <div class="glass-card activity-log-card">
+      <div class="card-header">
+        <span class="card-title">🕒 Recent Activity Log</span>
+        <button class="clear-btn" (click)="clearAllNotifications()" *ngIf="systemNotifications.length > 0">Clear Log</button>
+      </div>
+      
+      <div class="activity-list-container">
+        <div *ngIf="systemNotifications.length === 0" class="empty-state">
+          <p>No recent activity recorded.</p>
+        </div>
+        
+        <div class="activity-item" *ngFor="let notif of systemNotifications" [class]="notif.type">
+          <div class="activity-icon">
+            <i [class]="getIcon(notif.type)"></i>
+          </div>
+          <div class="activity-body">
+            <p class="activity-msg">{{ notif.message }}</p>
+            <span class="activity-time">{{ notif.timestamp | date:'medium' }}</span>
+          </div>
+          <div class="activity-badge" [class]="notif.type">{{ notif.type | uppercase }}</div>
+        </div>
+      </div>
     </div>
 
   </div>

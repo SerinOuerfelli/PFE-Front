@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EquipmentService, Equipment } from '../services/equipment.service';
 import { ThemeService } from '../services/theme.service';
+import { ToastService } from '../services/toast.service';
+import { NotificationService } from '../services/notification.service';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
 import * as L from 'leaflet';
 
@@ -22,7 +24,9 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   listOpen = true;
   selectedEquipmentId: number | null = null;
   incidents: any[] = [];
-  loadingIncidents = false;
+   loadingIncidents = false;
+   downloadingReport = false;
+   isDetailsOpen = false;
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   private mapMarkers: Map<number, L.CircleMarker> = new Map();
@@ -38,7 +42,9 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
 
   constructor(
     private equipmentService: EquipmentService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private toastService: ToastService,
+    @Inject(NotificationService) private notifService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -59,12 +65,10 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   }
 
   ngAfterViewInit() {
-    // Wait for data + DOM to be ready before initialising Leaflet
     setTimeout(() => {
       if (!this.loading && !this.map) {
         this.initMap();
       } else {
-        // Poll until data has arrived then init
         const poll = setInterval(() => {
           if (!this.loading) {
             clearInterval(poll);
@@ -97,13 +101,13 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
 
   toggleMap() {
     this.mapOpen = !this.mapOpen;
-    if (!this.mapOpen && !this.listOpen) this.listOpen = true; // Ensure at least one is open
+    if (!this.mapOpen && !this.listOpen) this.listOpen = true;
     setTimeout(() => {
       if (this.mapOpen) {
         if (!this.map) this.initMap();
         else this.map.invalidateSize();
       }
-    }, 500); // Wait for CSS transition
+    }, 500);
   }
 
   toggleList() {
@@ -122,18 +126,7 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   selectEquipment(id: number) {
     this.selectedEquipmentId = id;
     this.incidents = [];
-    this.loadingIncidents = true;
-
-    this.equipmentService.getEquipmentIncidents(id).subscribe({
-      next: (data) => {
-        this.incidents = data;
-        this.loadingIncidents = false;
-      },
-      error: (err) => {
-        console.error('Failed to load incidents:', err);
-        this.loadingIncidents = false;
-      }
-    });
+    this.loadIncidents(id);
     
     if (!this.mapOpen) this.toggleMap();
     if (!this.listOpen) this.toggleList();
@@ -142,12 +135,13 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       const eq = this.equipments.find(e => e.id === markerId);
       if (eq) {
         let defaultColor = this.getStatusColor(eq.status);
-        
         if (markerId === id) {
-           marker.setStyle({ color: '#2563eb', fillColor: '#2563eb', radius: 14, fillOpacity: 1 });
-           marker.openPopup();
+          marker.setStyle({ color: '#2563eb', fillColor: '#2563eb', radius: 14, fillOpacity: 1 });
+          if (this.map) {
+            marker.openPopup();
+          }
         } else {
-           marker.setStyle({ color: defaultColor, fillColor: defaultColor, radius: 8, fillOpacity: 0.6 });
+          marker.setStyle({ color: defaultColor, fillColor: defaultColor, radius: 8, fillOpacity: 0.6 });
         }
       }
     });
@@ -158,6 +152,25 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }, 150);
+  }
+
+  openDetails(id: number) {
+    this.selectEquipment(id);
+    this.isDetailsOpen = true;
+  }
+
+  loadIncidents(id: number) {
+    this.loadingIncidents = true;
+    this.equipmentService.getEquipmentIncidents(id).subscribe({
+      next: (data) => {
+        this.incidents = data;
+        this.loadingIncidents = false;
+      },
+      error: (err) => {
+        console.error('Failed to load incidents:', err);
+        this.loadingIncidents = false;
+      }
+    });
   }
 
   sortBy(column: string) {
@@ -173,10 +186,10 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
   applyFiltersAndSorting() {
     const q = this.searchTerm.toLowerCase();
     let filtered = this.allEquipments.filter(e => 
-      e.reference.toLowerCase().includes(q) ||
-      e.city.toLowerCase().includes(q) ||
-      e.area.toLowerCase().includes(q) ||
-      e.type.toLowerCase().includes(q)
+      (e.reference?.toLowerCase() || '').includes(q) ||
+      (e.city?.toLowerCase() || '').includes(q) ||
+      (e.area?.toLowerCase() || '').includes(q) ||
+      (e.type?.toLowerCase() || '').includes(q)
     );
     this.equipments = this.applySorting(filtered);
   }
@@ -205,22 +218,60 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
     }
   }
 
+  downloadEquipmentReport() {
+    if (!this.selectedEquipment) return;
+    this.downloadingReport = true;
+    this.equipmentService.downloadEquipmentReport(this.selectedEquipment.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Equipment_Audit_${this.selectedEquipment?.reference}_${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        this.downloadingReport = false;
+        this.toastService.success(`Report for ${this.selectedEquipment?.reference} generated successfully.`);
+        this.notifService.addNotification(`Report generated for ${this.selectedEquipment?.reference}`, 'info');
+      },
+      error: (err) => {
+        console.error('Download error:', err);
+        this.downloadingReport = false;
+        this.toastService.error('Failed to generate report. Please ensure the backend is active.');
+      }
+    });
+  }
+
   clearSelection() {
     this.selectedEquipmentId = null;
+    this.isDetailsOpen = false;
+    this.incidents = [];
   }
 
   changeStatus(newStatus: string) {
     if (this.selectedEquipmentId) {
       this.equipmentService.updateStatus(this.selectedEquipmentId, newStatus).subscribe({
         next: (updated) => {
-          // Update local state immediately
           const index = this.equipments.findIndex(e => e.id === updated.id);
           if (index !== -1) {
             this.equipments[index].status = updated.status;
+            
+            // Also update the master list to persist across filters
+            const masterIndex = this.allEquipments.findIndex(e => e.id === updated.id);
+            if (masterIndex !== -1) {
+              this.allEquipments[masterIndex].status = updated.status;
+            }
+
             this.updateMarkers();
+            this.toastService.success(`Status updated to ${updated.status} for ${updated.reference}`);
+            this.notifService.addNotification(`Status for ${updated.reference} changed to ${updated.status}`, 'success');
           }
         },
-        error: (err) => console.error('Failed to update status:', err)
+        error: (err) => {
+          console.error('Failed to update status:', err);
+          this.toastService.error('Failed to update equipment status.');
+        }
       });
     }
   }
@@ -231,7 +282,7 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       case 'INACTIVE': return '#ef4444';
       case 'MAINTENANCE': return '#f59e0b';
       case 'OUT_OF_SERVICE': return '#6366f1';
-      default: return '#94a3b8'; // Slate/Gray for unknown
+      default: return '#94a3b8';
     }
   }
 
@@ -243,7 +294,6 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       this.mapMarkers.clear();
     }
 
-    // Fix missing marker icons in leaflet
     const iconRetinaUrl = 'assets/marker-icon-2x.png';
     const iconUrl = 'assets/marker-icon.png';
     const shadowUrl = 'assets/marker-shadow.png';
@@ -259,23 +309,21 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
     });
     L.Marker.prototype.options.icon = iconDefault;
 
-    // Define strict boundaries for Tunisia
     const tunisiaBounds = L.latLngBounds(
-      L.latLng(30.0, 7.0), // South-West limits (Sahara)
-      L.latLng(37.6, 11.7) // North-East limits (Cap Bon/Bizerte coast)
+      L.latLng(30.0, 7.0),
+      L.latLng(37.6, 11.7)
     );
 
-    // Centered around Tunisia with locked bounds
     this.map = L.map(this.mapElement.nativeElement, {
       maxBounds: tunisiaBounds,
-      maxBoundsViscosity: 1.0, // Prevents bounding box bouncing
+      maxBoundsViscosity: 1.0,
       minZoom: 6
     }).setView([34.0, 9.5], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 6,
-      bounds: tunisiaBounds, // Only loads tiles within these coordinates
+      bounds: tunisiaBounds,
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
@@ -292,7 +340,6 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
         circle.bindPopup(`<b>${eq.reference}</b><br>${eq.type} - ${eq.city}<br>Status: ${eq.status}`);
         
         circle.on('click', () => {
-          // Trigger the Angular change detection manually using zone if needed, or normal binds
           this.selectEquipment(eq.id);
         });
 

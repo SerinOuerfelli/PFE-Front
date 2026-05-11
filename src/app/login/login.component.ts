@@ -45,10 +45,13 @@ export class LoginComponent {
         // If error, bring the panels back
         this.clipRemoved = false;
         this.animateOut = false;
+
+        const errorMessage = err.error?.message || 'Invalid email or password. Please try again.';
+
         Swal.fire({
           icon: 'error',
           title: 'Authentication Error',
-          text: 'Invalid email or password. Please try again.',
+          text: errorMessage,
           confirmButtonText: 'Try Again',
           timer: 5000,
           timerProgressBar: true,
@@ -64,13 +67,17 @@ export class LoginComponent {
       }
     });
   }
-  isSignup = false;
-
-  switchToSignup() { this.isSignup = true; }
-
-  switchToLogin() {
-    // Trigger reverse animation
-    this.clipRemoved = false;
+  onNeedHelp() {
+    Swal.fire({
+      title: 'Need Assistance?',
+      text: 'Please contact the IT support team at support@biat-it.com or visit the administration office to reset your credentials.',
+      icon: 'info',
+      confirmButtonText: 'Understood',
+      background: 'rgba(15, 30, 45, 0.95)',
+      color: '#ffffff',
+      customClass: {
+        popup: 'swal2-dark-glass'
+      }
+    });
   }
-
 }

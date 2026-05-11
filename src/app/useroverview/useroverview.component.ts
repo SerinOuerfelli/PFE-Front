@@ -4,6 +4,8 @@ import { Chart, registerables } from 'chart.js';
 import { CommonModule } from '@angular/common';
 import { ThemeService } from '../services/theme.service';
 import { Subscription, interval, startWith, switchMap } from 'rxjs';
+import { NotificationService, SystemNotification } from '../services/notification.service';
+import { ToastService } from '../services/toast.service';
 
 Chart.register(...registerables);
 
@@ -19,6 +21,7 @@ export class UserOverviewComponent implements OnInit {
   isNightMode: boolean = false;
   downloading: boolean = false;
   private pollingSub?: Subscription;
+  systemNotifications: SystemNotification[] = [];
 
   get topClientsEntries(): [string, number][] {
     if (!this.kpis?.TopClientsByTransactions) return [];
@@ -33,7 +36,12 @@ export class UserOverviewComponent implements OnInit {
       .sort((a, b) => a[0].localeCompare(b[0])) as [string, number][];
   }
 
-  constructor(private kpiService: KpiService, public themeService: ThemeService) { }
+  constructor(
+    private kpiService: KpiService, 
+    public themeService: ThemeService,
+    private notifService: NotificationService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.themeService.nightMode$.subscribe(isNight => {
@@ -54,6 +62,24 @@ export class UserOverviewComponent implements OnInit {
         },
         error: (err) => console.error('Failed to poll KPIs:', err)
       });
+
+    this.notifService.systemNotifications$.subscribe(notifs => {
+      this.systemNotifications = notifs;
+    });
+  }
+
+  clearAllNotifications() {
+    this.notifService.clearNotifications();
+  }
+
+  getIcon(type: string): string {
+    switch (type) {
+      case 'success': return 'fas fa-check-circle';
+      case 'info': return 'fas fa-info-circle';
+      case 'warning': return 'fas fa-exclamation-triangle';
+      case 'error': return 'fas fa-times-circle';
+      default: return 'fas fa-bell';
+    }
   }
 
   ngOnDestroy(): void {
@@ -282,7 +308,7 @@ export class UserOverviewComponent implements OnInit {
         if (blob.size < 100) {
           console.error('Downloaded file is too small, possible error:', blob);
           this.downloading = false;
-          alert('Failed to generate a valid PDF. Please check server logs.');
+          this.toastService.error('Failed to generate a valid PDF. Please check server logs.');
           return;
         }
 
@@ -300,10 +326,12 @@ export class UserOverviewComponent implements OnInit {
 
         window.URL.revokeObjectURL(url);
         this.downloading = false;
+        this.toastService.success('Performance report generated and downloaded.');
+        this.notifService.addNotification('Performance report downloaded', 'info');
       },
       error: (err) => {
         console.error('Download failed:', err);
-        alert('Download failed. Make sure the backend is running with the new PDF dependencies.');
+        this.toastService.error('Download failed. Ensure backend PDF dependencies are installed.');
         this.downloading = false;
       }
     });

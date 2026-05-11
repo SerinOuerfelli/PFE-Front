@@ -13,16 +13,18 @@ import { RecommendationComponent } from '../recommendation/recommendation.compon
 import { DecisionComponent } from '../decision/decision.component';
 import { EquipmentOverviewComponent } from '../equipment-overview/equipment-overview.component';
 import { NotificationService, UnreadCounts } from '../services/notification.service';
+import { ToastService } from '../services/toast.service';
 import { MetricsComponent } from '../metrics/metrics.component';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
+import { ToastNotificationsComponent } from '../toast-notifications/toast-notifications.component';
 
 import { AgentService } from '../services/agent.service';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, MetricsComponent, ChatbotComponent, ChatBubbleComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, RecommendationComponent, DecisionComponent, EquipmentOverviewComponent, MetricsComponent, ChatbotComponent, ChatBubbleComponent, ToastNotificationsComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
@@ -46,7 +48,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private kpiService: KpiService,
     public themeService: ThemeService,
     private notificationService: NotificationService,
-    private agentService: AgentService
+    private agentService: AgentService,
+    private toastService: ToastService
   ) {}
 
   onRetrain(): void {
@@ -57,11 +60,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.retrainMessage = 'AI retrained successfully!';
         this.retrainLoading = false;
+        this.toastService.success('AI Model retrained successfully with latest production data.');
+        this.notificationService.addNotification('AI Model Retrained', 'success');
         setTimeout(() => this.retrainMessage = '', 3000);
       },
       error: (err) => {
         this.retrainMessage = 'Error connecting to AI agent.';
         this.retrainLoading = false;
+        this.toastService.error('Failed to connect to AI Chaos Agent.');
       }
     });
   }
@@ -81,13 +87,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.username = localStorage.getItem('username');
     this.email = localStorage.getItem('email');
 
-    // Subscribe to notification counts and start polling
-    this.notificationService.unread$.subscribe(counts => this.unread = counts);
-    this.notificationService.startPolling(3000); 
+    // The user requested to remove automatic notifications/polling for predictions, decisions, and recommendations.
+    // this.notificationService.unread$.subscribe(counts => this.unread = counts);
+    // this.notificationService.startPolling(3000);
   }
 
   ngOnDestroy(): void {
-    this.notificationService.stopPolling();
+    // this.notificationService.stopPolling();
     this.kpiPollingSub?.unsubscribe();
   }
 

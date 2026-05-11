@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { MetricService } from '../services/metric.service';
 import { Metric } from '../Model/Metric';
 import { ThemeService } from '../services/theme.service';
+import { ToastService } from '../services/toast.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-metrics',
@@ -33,7 +35,9 @@ export class MetricsComponent implements OnInit {
 
   constructor(
     private metricService: MetricService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private toastService: ToastService,
+    private notifService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -115,21 +119,27 @@ export class MetricsComponent implements OnInit {
   saveMetric(): void {
     if (this.isEditing && this.selectedId !== null) {
       this.metricService.update(this.selectedId, this.form).subscribe({
-        next: () => {
-          this.showSuccess('Metric updated successfully.');
+        next: (updated) => {
+          this.toastService.success(`Metric ${updated.metricName} updated successfully.`);
+          this.notifService.addNotification(`Metric updated: ${updated.metricName}`, 'success');
           this.loadMetrics();
           this.closeModal();
         },
-        error: () => this.showError('Update failed.')
+        error: () => {
+          this.toastService.error('Failed to update metric.');
+        }
       });
     } else {
       this.metricService.create(this.form).subscribe({
-        next: () => {
-          this.showSuccess('Metric created successfully.');
+        next: (created) => {
+          this.toastService.success(`Metric ${created.metricName} created successfully.`);
+          this.notifService.addNotification(`New metric created: ${created.metricName}`, 'success');
           this.loadMetrics();
           this.closeModal();
         },
-        error: () => this.showError('Creation failed.')
+        error: () => {
+          this.toastService.error('Failed to create metric.');
+        }
       });
     }
   }
@@ -143,23 +153,22 @@ export class MetricsComponent implements OnInit {
     if (this.selectedId === null) return;
     this.metricService.delete(this.selectedId).subscribe({
       next: () => {
-        this.showSuccess('Metric deleted.');
+        this.toastService.success('Metric deleted successfully.');
+        this.notifService.addNotification('A metric was deleted', 'warning');
         this.loadMetrics();
         this.closeModal();
       },
-      error: () => this.showError('Delete failed.')
+      error: () => {
+        this.toastService.error('Failed to delete metric.');
+      }
     });
   }
 
   private showSuccess(msg: string): void {
-    this.successMessage = msg;
-    this.errorMessage = '';
-    setTimeout(() => this.successMessage = '', 3500);
+    this.toastService.success(msg);
   }
 
   private showError(msg: string): void {
-    this.errorMessage = msg;
-    this.successMessage = '';
-    setTimeout(() => this.errorMessage = '', 3500);
+    this.toastService.error(msg);
   }
 }

@@ -23,6 +23,10 @@
           [class.active]="activeItem === 'Dashboard Overview'">
           <i class="fas fa-tachometer-alt icon"></i> Dashboard Overview
         </li>
+        <li (click)="setActive('Equipment Overview '); loadContent('Equipment Overview ')"
+          [class.active]="activeItem === 'Equipment Overview '">
+          <i class="fas fa-cog icon"></i> Equipment Overview
+        </li>
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
           <i class="fas fa-robot icon"></i> ChatBot
         </li>
@@ -77,6 +81,7 @@
         <app-analytics *ngIf="currentContent === 'analytics'"></app-analytics>
         <app-rapports *ngIf="currentContent === 'rapports'"></app-rapports>
         <app-prediction *ngIf="currentContent === 'predictions'"></app-prediction>
+        <app-equipment-overview *ngIf="currentContent === 'Equipment Overview '"></app-equipment-overview>
         <app-chatbot *ngIf="currentContent === 'chatbot'"></app-chatbot>
       </div>
     </div>
@@ -84,4 +89,7 @@
 
   <!-- Floating Chat Bubble (hidden on full chatbot page) -->
   <app-chat-bubble *ngIf="currentContent !== 'chatbot'"></app-chat-bubble>
+  
+  <!-- Global Toast Notifications -->
+  <app-toast-notifications></app-toast-notifications>
 </body>

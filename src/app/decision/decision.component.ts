@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DecisionService } from '../services/decision.service';
 import { Decision } from '../Model/Decision';
 import { ThemeService } from '../services/theme.service';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-decision',
@@ -12,11 +13,12 @@ import { ThemeService } from '../services/theme.service';
   templateUrl: './decision.component.html',
   styleUrl: './decision.component.css'
 })
-export class DecisionComponent implements OnInit {
+export class DecisionComponent implements OnInit, OnDestroy {
   decisions: Decision[] = [];
   loading: boolean = true;
   error: string | null = null;
   searchQuery: string = '';
+  private pollingSub?: Subscription;
 
   constructor(
     private decisionService: DecisionService,
@@ -25,10 +27,20 @@ export class DecisionComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchDecisions();
+    // Silently poll for new decisions every 5 seconds
+    this.pollingSub = interval(5000).subscribe(() => {
+      this.fetchDecisions(true);
+    });
   }
 
-  fetchDecisions(): void {
-    this.loading = true;
+  ngOnDestroy(): void {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+  }
+
+  fetchDecisions(isSilent: boolean = false): void {
+    if (!isSilent) this.loading = true;
     this.error = null;
     this.decisionService.getAllDecisions().subscribe({
       next: (data) => {
@@ -63,12 +75,12 @@ export class DecisionComponent implements OnInit {
         } else {
           this.decisions = data;
         }
-        this.loading = false;
+        if (!isSilent) this.loading = false;
       },
       error: (err) => {
         console.error('Error fetching decisions:', err);
         this.error = 'Failed to load decisions. Connection error.';
-        this.loading = false;
+        if (!isSilent) this.loading = false;
         
         // Fallback mock even on error for design validation
         this.decisions = [

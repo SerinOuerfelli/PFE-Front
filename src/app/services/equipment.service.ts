@@ -45,24 +45,24 @@ export class EquipmentService {
       catchError(err => {
         console.error("Backend error, loading mock equipment list", err);
         return of([
-          { 
-            id: 1, reference: 'EQ-1001', type: 'DAB', status: 'ACTIVE', city: 'Tunis', region: 'Tunis', area: 'North', latitude: 36.8065, longitude: 10.1815, 
+          {
+            id: 1, reference: 'EQ-1001', type: 'DAB', status: 'ACTIVE', city: 'Tunis', region: 'Tunis', area: 'North', latitude: 36.8065, longitude: 10.1815,
             hardwareVersion: 'v4.2.0', lastMaintenanceDate: '2023-10-12'
           },
-          { 
-            id: 2, reference: 'EQ-1002', type: 'TPE', status: 'INACTIVE', city: 'Sfax', region: 'Sfax', area: 'South', latitude: 34.7400, longitude: 10.7600, 
+          {
+            id: 2, reference: 'EQ-1002', type: 'TPE', status: 'INACTIVE', city: 'Sfax', region: 'Sfax', area: 'South', latitude: 34.7400, longitude: 10.7600,
             hardwareVersion: 'v3.1.5', lastMaintenanceDate: '2023-08-20'
           },
-          { 
-            id: 3, reference: 'EQ-1003', type: 'DAB', status: 'MAINTENANCE', city: 'Sousse', region: 'Sousse', area: 'Center', latitude: 35.8256, longitude: 10.6369, 
+          {
+            id: 3, reference: 'EQ-1003', type: 'DAB', status: 'MAINTENANCE', city: 'Sousse', region: 'Sousse', area: 'Center', latitude: 35.8256, longitude: 10.6369,
             hardwareVersion: 'v4.0.1', lastMaintenanceDate: '2023-11-05'
           },
-          { 
-            id: 6, reference: 'EQ-1006', type: 'EPT', status: 'ACTIVE', city: 'Nabeul', region: 'Nabeul', area: 'Center', latitude: 36.444, longitude: 11.333, 
+          {
+            id: 6, reference: 'EQ-1006', type: 'EPT', status: 'ACTIVE', city: 'Nabeul', region: 'Nabeul', area: 'Center', latitude: 36.444, longitude: 11.333,
             hardwareVersion: 'v4.2.0', lastMaintenanceDate: '2023-12-01'
           },
-          { 
-            id: 7, reference: 'EQ-1007', type: 'TPE', status: 'ACTIVE', city: 'Bizerte', region: 'Bizerte', area: 'North', latitude: 37.2768, longitude: 9.8739, 
+          {
+            id: 7, reference: 'EQ-1007', type: 'TPE', status: 'ACTIVE', city: 'Bizerte', region: 'Bizerte', area: 'North', latitude: 37.2768, longitude: 9.8739,
             hardwareVersion: 'v3.8.2', lastMaintenanceDate: '2023-09-15'
           }
         ]);
@@ -95,5 +95,13 @@ export class EquipmentService {
     const headers = this.createAuthHeaders();
     const equipmentApiUrl = 'http://localhost:8080/api/equipment';
     return this.http.get<any[]>(`${equipmentApiUrl}/${id}/incidents`, { headers });
+  }
+
+  downloadEquipmentReport(id: number): Observable<Blob> {
+    const headers = this.createAuthHeaders();
+    return this.http.get(`http://localhost:8080/api/reports/equipment/${id}/download`, {
+      headers,
+      responseType: 'blob'
+    });
   }
 }

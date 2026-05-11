@@ -10,13 +10,15 @@ import { ThemeService } from '../services/theme.service';
 import { PredictionComponent } from '../prediction/prediction.component';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
+import { EquipmentOverviewComponent } from '../equipment-overview/equipment-overview.component';
+import { ToastNotificationsComponent } from '../toast-notifications/toast-notifications.component';
 
 import { AgentService } from '../services/agent.service';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, ChatbotComponent, ChatBubbleComponent],
+  imports: [CommonModule, FormsModule, UserOverviewComponent, AnalyticsComponent, RapportsComponent, PredictionComponent, ChatbotComponent, ChatBubbleComponent, EquipmentOverviewComponent, ToastNotificationsComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.css'
 })

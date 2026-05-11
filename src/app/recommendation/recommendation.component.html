@@ -91,12 +91,12 @@
                         <div class="dec-header">
                           <div class="user-info">
                             <div class="user-avatar"
-                              [style.background-color]="dec.user?.role === 'SUPERADMIN' ? '#2563eb' : '#64748b'">
-                              {{ getInitials(dec.user?.username || 'U') }}
+                              [style.background-color]="dec.user.role === 'SUPERADMIN' ? '#2563eb' : '#64748b'">
+                              {{ getInitials(dec.user.username || 'U') }}
                             </div>
                             <div class="user-text">
-                              <span class="username">{{ dec.user?.username }}</span>
-                              <span class="user-role">{{ dec.user?.role }}</span>
+                              <span class="username">{{ dec.user.username }}</span>
+                              <span class="user-role">{{ dec.user.role }}</span>
                             </div>
                           </div>
                           <div class="dec-date">{{ dec.decisionDate | date:'MMM dd, HH:mm' }}</div>

@@ -13,6 +13,13 @@ export interface UnreadCounts {
   total: number;
 }
 
+export interface SystemNotification {
+  id: number;
+  message: string;
+  type: 'success' | 'info' | 'warning' | 'error';
+  timestamp: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,11 +28,16 @@ export class NotificationService implements OnDestroy {
   private unreadSubject = new BehaviorSubject<UnreadCounts>({ predictions: 0, recommendations: 0, decisions: 0, total: 0 });
   unread$ = this.unreadSubject.asObservable();
 
+  // Streams system activity notifications (Activity Log)
+  private systemNotifsSubject = new BehaviorSubject<SystemNotification[]>([]);
+  systemNotifications$ = this.systemNotifsSubject.asObservable();
+  private systemNotifs: SystemNotification[] = [];
+
   private pollingSub?: Subscription;
 
   // Track the actual lengths retrieved from backend
   private currentLengths = { predictions: 0, recommendations: 0, decisions: 0 };
-  
+
   // Track what the user 'has seen' (persisted between reloads)
   private seenLengths = { predictions: 0, recommendations: 0, decisions: 0 };
 
@@ -35,11 +47,12 @@ export class NotificationService implements OnDestroy {
     private decService: DecisionService
   ) {
     this.loadSeenState();
+    this.loadSystemNotifications();
   }
 
   startPolling(intervalMs: number = 500000) {
     if (this.pollingSub) return;
-    
+
     // Fire immediately (0), then every intervalMs
     this.pollingSub = timer(0, intervalMs).subscribe(() => {
       this.fetchUpdates();
@@ -52,8 +65,6 @@ export class NotificationService implements OnDestroy {
       this.pollingSub = undefined;
     }
   }
-
-
 
   private fetchUpdates() {
     // Parallel fetch from all three AI endpoints
@@ -89,9 +100,54 @@ export class NotificationService implements OnDestroy {
   }
 
   /**
-   * Called when user clicks a specific sidebar tab.
-   * Resets the 'seen' count to current, clearing the specific badge.
+   * System Activity Log Logic
    */
+  addNotification(message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') {
+    const newNotif: SystemNotification = {
+      id: Date.now(),
+      message,
+      type,
+      timestamp: new Date()
+    };
+    this.systemNotifs.unshift(newNotif); // Add to top
+    // Keep only last 20
+    if (this.systemNotifs.length > 20) {
+      this.systemNotifs = this.systemNotifs.slice(0, 20);
+    }
+    this.systemNotifsSubject.next([...this.systemNotifs]);
+    this.saveSystemNotifications();
+  }
+
+  /**
+   * Alias for addNotification to support legacy calls
+   */
+  notify(message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') {
+    this.addNotification(message, type);
+  }
+
+  clearNotifications() {
+    this.systemNotifs = [];
+    this.systemNotifsSubject.next([]);
+    this.saveSystemNotifications();
+  }
+
+  private loadSystemNotifications() {
+    try {
+      const saved = localStorage.getItem('biat_system_notifications');
+      if (saved) {
+        this.systemNotifs = JSON.parse(saved).map((n: any) => ({
+          ...n,
+          timestamp: new Date(n.timestamp)
+        }));
+        this.systemNotifsSubject.next([...this.systemNotifs]);
+      }
+    } catch { }
+  }
+
+  private saveSystemNotifications() {
+    localStorage.setItem('biat_system_notifications', JSON.stringify(this.systemNotifs));
+  }
+
   markAsSeen(category: 'predictions' | 'recommendations' | 'decisions') {
     this.seenLengths[category] = this.currentLengths[category];
     this.saveSeenState();

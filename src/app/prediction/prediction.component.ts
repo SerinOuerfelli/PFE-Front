@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PredictionService } from '../services/prediction.service';
 import { Prediction } from '../Model/Prediction';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-prediction',
@@ -11,7 +12,7 @@ import { Prediction } from '../Model/Prediction';
   templateUrl: './prediction.component.html',
   styleUrls: ['./prediction.component.css']
 })
-export class PredictionComponent implements OnInit {
+export class PredictionComponent implements OnInit, OnDestroy {
   predictions: Prediction[] = [];
   loading: boolean = true;
   error: string | null = null;
@@ -21,15 +22,26 @@ export class PredictionComponent implements OnInit {
   expandedPredictionIds: Set<number> = new Set();
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+  private pollingSub?: Subscription;
 
   constructor(private predictionService: PredictionService) { }
 
   ngOnInit(): void {
     this.fetchPredictions();
+    // Silently poll for new predictions every 5 seconds
+    this.pollingSub = interval(5000).subscribe(() => {
+      this.fetchPredictions(true);
+    });
   }
 
-  fetchPredictions(): void {
-    this.loading = true;
+  ngOnDestroy(): void {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+  }
+
+  fetchPredictions(isSilent: boolean = false): void {
+    if (!isSilent) this.loading = true;
     this.error = null;
     this.predictionService.getAllPredictions().subscribe({
       next: (data) => {
@@ -47,14 +59,14 @@ export class PredictionComponent implements OnInit {
         } else {
           this.predictions = data;
         }
-        this.currentPage = 1;
-        this.loading = false;
+        if (!isSilent) this.currentPage = 1;
+        if (!isSilent) this.loading = false;
       },
       error: (err) => {
         console.error('Error fetching predictions:', err);
         // Fallback or error display
         this.error = 'Failed to load predictions. Please ensure the backend is running.';
-        this.loading = false;
+        if (!isSilent) this.loading = false;
       }
     });
   }

@@ -5,6 +5,7 @@ import { UsersService } from '../services/users.service';
 import { User } from '../Model/User';
 import Swal from 'sweetalert2';
 import { ThemeService } from '../services/theme.service';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-user-management',
@@ -34,7 +35,8 @@ export class UserManagementComponent implements OnInit {
 
   constructor(
     private usersService: UsersService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private notifService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -119,6 +121,7 @@ export class UserManagementComponent implements OnInit {
         obs.subscribe({
           next: () => {
             user.active = !user.active;
+            this.notifService.addNotification(`User ${user.username} has been ${statusText}.`, user.active ? 'success' : 'warning');
             Swal.fire(
               'Success!',
               `User has been ${statusText}.`,
@@ -187,6 +190,7 @@ export class UserManagementComponent implements OnInit {
       // Update logic
       this.usersService.updateUser(this.editingUserId, userToSave as User).subscribe({
         next: () => {
+          this.notifService.addNotification(`User profile updated: ${userToSave.username}`, 'info');
           Swal.fire('Updated!', 'User profile modified successfully.', 'success');
           this.closeModal();
           this.fetchUsers();
@@ -200,6 +204,7 @@ export class UserManagementComponent implements OnInit {
       // Create logic
       this.usersService.addUser(userToSave as User).subscribe({
         next: () => {
+          this.notifService.addNotification(`New user created: ${userToSave.username}`, 'success');
           Swal.fire('Created!', 'New user added successfully.', 'success');
           this.closeModal();
           this.fetchUsers();

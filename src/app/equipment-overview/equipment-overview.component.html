@@ -31,7 +31,6 @@
 
   <div class="split-view-layout" *ngIf="!loading">
     
-    <!-- Left Panel: Map -->
     <div class="map-panel" [class.collapsed]="!mapOpen">
       <div class="panel-header" (click)="toggleMap()">
         <h3><span class="icon">🗺️</span> Geographic Context</h3>
@@ -44,7 +43,6 @@
       </div>
     </div>
 
-    <!-- Right Panel: List -->
     <div class="list-panel" [class.collapsed]="!listOpen">
       <div class="panel-header" (click)="toggleList()">
         <h3><span class="icon">📋</span> Equipment Registry</h3>
@@ -75,6 +73,7 @@
                   Incidents 
                   <span class="sort-icon" *ngIf="sortColumn === 'incidents'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
                 </th>
+                <th style="width: 60px;">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -107,6 +106,11 @@
                     None
                   </span>
                 </td>
+                <td class="actions-cell">
+                  <button class="action-btn" (click)="openDetails(eq.id); $event.stopPropagation()" title="View Details" style="padding: 0; border-radius: 10px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(37, 99, 235, 0.08); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.15);">
+                    <i class="fas fa-eye" style="font-size: 1.1rem;"></i>
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -116,8 +120,7 @@
 
   </div>
 
-  <!-- Detailed Info Panel (Appears on Selection) -->
-  <div class="detail-panel-overlay" *ngIf="selectedEquipment" (click)="clearSelection()">
+  <div class="detail-panel-overlay" *ngIf="isDetailsOpen && selectedEquipment" (click)="clearSelection()">
     <div class="detail-panel" (click)="$event.stopPropagation()">
       <div class="detail-header">
         <div class="header-left">
@@ -169,19 +172,6 @@
           </div>
         </div>
 
-        <div class="technical-section" *ngIf="selectedEquipment.lastMaintenanceDate || selectedEquipment.hardwareVersion">
-          <h3>Technical Context</h3>
-          <div class="tech-card">
-            <div class="tech-row" *ngIf="selectedEquipment.lastMaintenanceDate">
-              <span>Last Maintenance</span>
-              <strong>{{ selectedEquipment.lastMaintenanceDate | date:'mediumDate' }}</strong>
-            </div>
-            <div class="tech-row" *ngIf="selectedEquipment.hardwareVersion">
-              <span>Hardware Version</span>
-              <strong>{{ selectedEquipment.hardwareVersion }}</strong>
-            </div>
-          </div>
-        </div>
 
         <div class="technical-section">
           <h3>Incident History (Pannes)</h3>
@@ -209,7 +199,9 @@
       </div>
 
       <div class="detail-footer">
-        <button class="action-btn primary">Generate Full Report</button>
+        <button class="action-btn primary" (click)="downloadEquipmentReport()" [disabled]="downloadingReport">
+          {{ downloadingReport ? '⌛ Generating...' : '📄 Generate Full Report' }}
+        </button>
         <button class="action-btn" (click)="clearSelection()">Dismiss</button>
       </div>
     </div>
