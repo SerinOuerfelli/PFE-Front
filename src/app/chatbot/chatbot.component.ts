@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatMessage } from '../services/chat.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chatbot',
@@ -20,6 +21,7 @@ export class ChatbotComponent implements AfterViewChecked {
   isChatStarted: boolean = false;
   username: string = '';
   isUserScrolledUp: boolean = false;
+  private chatSub?: Subscription;
 
   // Quick suggestions for the welcome screen
   suggestions: string[] = [
@@ -31,6 +33,15 @@ export class ChatbotComponent implements AfterViewChecked {
 
   constructor(private chatService: ChatService) {
     this.username = localStorage.getItem('username') || 'User';
+    // Subscribe to shared state
+    this.chatSub = this.chatService.messages$.subscribe(msgs => {
+      this.messages = msgs;
+      if (msgs.length > 0) this.isChatStarted = true;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.chatSub) this.chatSub.unsubscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -41,36 +52,15 @@ export class ChatbotComponent implements AfterViewChecked {
     const message = content || this.userInput.trim();
     if (!message || this.isLoading) return;
 
-    this.isChatStarted = true;
-
-    // Add user message
-    this.messages.push({
-      role: 'user',
-      content: message,
-      timestamp: new Date()
-    });
-
-    this.forceScrollToBottom();
-
     this.userInput = '';
     this.isLoading = true;
 
     this.chatService.sendMessage(message).subscribe({
-      next: (response) => {
-        this.messages.push({
-          role: 'bot',
-          content: response,
-          timestamp: new Date()
-        });
+      next: () => {
         this.isLoading = false;
         setTimeout(() => this.messageInput.nativeElement.focus(), 0);
       },
       error: (err) => {
-        this.messages.push({
-          role: 'bot',
-          content: '⚠️ Sorry, I couldn\'t process your request. Please check the connection and try again.',
-          timestamp: new Date()
-        });
         this.isLoading = false;
         setTimeout(() => this.messageInput.nativeElement.focus(), 0);
         console.error('Chat error:', err);
@@ -85,7 +75,7 @@ export class ChatbotComponent implements AfterViewChecked {
   }
 
   clearChat(): void {
-    this.messages = [];
+    this.chatService.clearHistory();
     this.isChatStarted = false;
   }
 
