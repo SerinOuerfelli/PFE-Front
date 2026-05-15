@@ -220,6 +220,26 @@
   box-shadow: 0 2px 10px rgba(37, 150, 190, 0.3);
 }
 
+.help-links {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.5rem;
+  animation: fadeInUp 0.8s ease-out 0.5s backwards;
+}
+
+.help-links span {
+  color: #2596be;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.help-links span:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 @media (max-width: 900px) {
   .auth-container {
     flex-direction: column;
