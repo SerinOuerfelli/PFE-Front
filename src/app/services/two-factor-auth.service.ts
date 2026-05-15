@@ -16,8 +16,8 @@ export class TwoFactorAuthService {
   return this.http.get<any>(`${this.apiUrl}/generate?email=${email}`);
 }
 
-verifyCode(email: string, code: number) {
-  return this.http.post<string>(
+verifyCode(email: string, code: string) {
+  return this.http.post<any>(
     `${this.apiUrl}/verify?email=${email}&code=${code}`,
     {}
   );

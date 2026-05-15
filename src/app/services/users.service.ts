@@ -67,4 +67,9 @@ export class UsersService {
     const headers = this.createAuthHeaders();
     return this.http.post(`${this.apiUrl}/${userId}/reset-password`, {}, { headers, responseType: 'text' });
   }
+
+  changePassword(userId: number, passwords: any): Observable<string> {
+    const headers = this.createAuthHeaders();
+    return this.http.post(`${this.apiUrl}/${userId}/change-password`, passwords, { headers, responseType: 'text' });
+  }
 }

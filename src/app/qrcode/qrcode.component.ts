@@ -54,9 +54,7 @@ export class QrcodeComponent implements OnInit {
 
   verify(): void {
     if (this.email && this.code.length === 6) {
-      const numericCode = Number(this.code);
-
-      this.twoFactorAuthService.verifyCode(this.email, numericCode).subscribe({
+      this.twoFactorAuthService.verifyCode(this.email, this.code).subscribe({
         next: () => {
           const role = localStorage.getItem('role');
 

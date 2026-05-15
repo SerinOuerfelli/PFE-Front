@@ -14,6 +14,7 @@ import { EquipmentOverviewComponent } from '../equipment-overview/equipment-over
 import { ToastNotificationsComponent } from '../toast-notifications/toast-notifications.component';
 
 import { AgentService } from '../services/agent.service';
+import { PasswordCheckService } from '../services/password-check.service';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -37,7 +38,8 @@ export class UserDashboardComponent {
     private router: Router,
     private kpiService: KpiService,
     public themeService: ThemeService,
-    private agentService: AgentService
+    private agentService: AgentService,
+    private passwordCheckService: PasswordCheckService
   ) {}
 
   onRetrain(): void {
@@ -64,6 +66,8 @@ export class UserDashboardComponent {
 
     this.username = localStorage.getItem('username');
     this.email = localStorage.getItem('email');
+
+    this.passwordCheckService.checkPasswordStatus();
   }
 
   loadContent(target: string) {

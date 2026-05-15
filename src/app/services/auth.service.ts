@@ -10,6 +10,7 @@ interface LoginResponse {
   id: number;
   email: string;
   username: string;
+  passwordChanged: boolean;
 }
 
 @Injectable({
@@ -38,6 +39,10 @@ export class AuthService {
     localStorage.setItem('id', response.id.toString());  
     localStorage.setItem('email', response.email); 
     localStorage.setItem('username', response.username); 
+    
+    // Safety check: default to true if the field is missing (for legacy users)
+    const passwordChanged = response.passwordChanged !== undefined ? response.passwordChanged : true;
+    localStorage.setItem('passwordChanged', passwordChanged.toString());
   }
 
   

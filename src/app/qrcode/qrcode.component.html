@@ -6,7 +6,11 @@
 
   <!-- Left QR section -->
   <div class="welcome-section">
-    <qrcode [qrdata]="qrData" [width]="220" [errorCorrectionLevel]="'M'"></qrcode>
+    <qrcode *ngIf="qrData" [qrdata]="qrData" [width]="220" [errorCorrectionLevel]="'M'"></qrcode>
+    <div *ngIf="!qrData" class="qr-placeholder">
+      <div class="spinner"></div>
+      <p>Generating secure QR...</p>
+    </div>
     <p>Scan the code or enter verification below</p>
   </div>
 

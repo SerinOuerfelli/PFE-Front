@@ -20,6 +20,7 @@ import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 import { ToastNotificationsComponent } from '../toast-notifications/toast-notifications.component';
 
 import { AgentService } from '../services/agent.service';
+import { PasswordCheckService } from '../services/password-check.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -49,7 +50,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private notificationService: NotificationService,
     private agentService: AgentService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private passwordCheckService: PasswordCheckService
   ) {}
 
   onRetrain(): void {
@@ -87,9 +89,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.username = localStorage.getItem('username');
     this.email = localStorage.getItem('email');
 
-    // The user requested to remove automatic notifications/polling for predictions, decisions, and recommendations.
-    // this.notificationService.unread$.subscribe(counts => this.unread = counts);
-    // this.notificationService.startPolling(3000);
+    this.passwordCheckService.checkPasswordStatus();
   }
 
   ngOnDestroy(): void {
