@@ -261,6 +261,10 @@ export class QrcodeComponent implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/login']);
+  }
+
   private showError(message: string) {
     Swal.fire({
       icon: 'error',

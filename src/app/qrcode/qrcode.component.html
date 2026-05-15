@@ -1,4 +1,9 @@
 <div class="auth-container">
+  <!-- Top Corner Return Button -->
+  <button class="btn-corner-return" (click)="goBack()" title="Back to Login">
+    <span>←</span>
+  </button>
+
   <!-- Left QR section -->
   <div class="welcome-section">
     <qrcode [qrdata]="qrData" [width]="220" [errorCorrectionLevel]="'M'"></qrcode>

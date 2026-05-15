@@ -27,11 +27,10 @@ export class UserManagementComponent implements OnInit {
   isModalOpen: boolean = false;
   isEditMode: boolean = false;
   editingUserId: number | null = null;
+  resettingPassword: boolean = false;
   newUser: any = {
     username: '',
     email: '',
-    password: '',
-    confirmPassword: '',
     role: 'TECHNICIAN',
     active: true
   };
@@ -163,8 +162,6 @@ export class UserManagementComponent implements OnInit {
     this.newUser = {
       username: user.username,
       email: user.email.replace('@biat-it.com', ''),
-      password: '', // We don't fetch passwords, so keep it empty. If they don't type a new one, don't update it.
-      confirmPassword: '',
       role: user.role,
       active: user.active
     };
@@ -180,37 +177,26 @@ export class UserManagementComponent implements OnInit {
     this.newUser = {
       username: '',
       email: '',
-      password: '',
-      confirmPassword: '',
       role: 'TECHNICIAN',
       active: true
     };
   }
 
   saveUser(): void {
-    // Only strictly require password if we are creating a newly fresh user.
-    if (!this.newUser.username || !this.newUser.email || (!this.isEditMode && !this.newUser.password)) {
-      Swal.fire('Wait', 'Please fill in all required fields', 'info');
+    if (!this.newUser.username || !this.newUser.email) {
+      Swal.fire('Wait', 'Please fill in all required fields (username and email)', 'info');
       return;
     }
 
-    // Password confirmation logic
-    if (this.newUser.password !== this.newUser.confirmPassword) {
-      Swal.fire('Wait', 'Passwords do not match!', 'warning');
-      return;
-    }
-
-    // Ensure we send the full email to the service
     const userToSave = { ...this.newUser };
-    delete userToSave.confirmPassword;
 
     if (!userToSave.email.includes('@')) {
       userToSave.email = userToSave.email + '@biat-it.com';
     }
 
     // Check if email already exists in local list
-    const emailExists = this.users.some(u => 
-      u.email.toLowerCase() === userToSave.email.toLowerCase() && 
+    const emailExists = this.users.some(u =>
+      u.email.toLowerCase() === userToSave.email.toLowerCase() &&
       (!this.isEditMode || u.userId !== this.editingUserId)
     );
 
@@ -248,6 +234,34 @@ export class UserManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  resetUserPassword(): void {
+    if (!this.editingUserId) return;
+
+    Swal.fire({
+      title: 'Reset Password?',
+      text: `A new password will be generated and sent to ${this.newUser.email.includes('@') ? this.newUser.email : this.newUser.email + '@biat-it.com'}. Are you sure?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Reset & Send',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.resettingPassword = true;
+        this.usersService.resetPassword(this.editingUserId!).subscribe({
+          next: () => {
+            this.resettingPassword = false;
+            Swal.fire('Sent!', 'A new password has been generated and sent to the user\'s email.', 'success');
+          },
+          error: (err) => {
+            this.resettingPassword = false;
+            console.error('Error resetting password:', err);
+            Swal.fire('Error', 'Failed to reset and send the password. Please try again.', 'error');
+          }
+        });
+      }
+    });
   }
 
   getInitials(name: string): string {

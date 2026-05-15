@@ -62,4 +62,9 @@ export class UsersService {
     const headers = this.createAuthHeaders();
     return this.http.get<User>(`${this.apiUrl}/email/${normalizedEmail}`, { headers });
   }
+
+  resetPassword(userId: number): Observable<string> {
+    const headers = this.createAuthHeaders();
+    return this.http.post(`${this.apiUrl}/${userId}/reset-password`, {}, { headers, responseType: 'text' });
+  }
 }

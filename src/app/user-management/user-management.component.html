@@ -130,15 +130,20 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Password {{ isEditMode ? '(Leave blank to keep)' : '*' }}</label>
-          <input type="password" [(ngModel)]="newUser.password" placeholder="••••••••">
-        </div>
-        <div class="form-group">
-          <label>Confirm Password {{ isEditMode && !newUser.password ? '' : '*' }}</label>
-          <input type="password" [(ngModel)]="newUser.confirmPassword" placeholder="••••••••">
-        </div>
+      <div class="form-group info-notice">
+        <ng-container *ngIf="!isEditMode">
+          🔐 A secure password will be automatically generated and sent to the user's email upon account creation.
+        </ng-container>
+        <ng-container *ngIf="isEditMode">
+          🔐 A new password can be generated and sent to the user at any time using the button below.
+        </ng-container>
+      </div>
+
+      <div class="form-group" *ngIf="isEditMode">
+        <button class="btn-reset-password" (click)="resetUserPassword()" [disabled]="resettingPassword">
+          <span *ngIf="!resettingPassword">🔑 Generate & Send New Password</span>
+          <span *ngIf="resettingPassword">⏳ Sending...</span>
+        </button>
       </div>
 
       <div class="form-group">
