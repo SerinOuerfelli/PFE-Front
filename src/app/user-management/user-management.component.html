@@ -14,10 +14,27 @@
     </button>
   </div>
 
-  <!-- ===== Search Bar ===== -->
   <div class="search-bar">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search by name, email or role…" [(ngModel)]="searchQuery" />
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search by name or email…" [(ngModel)]="searchQuery" />
+    </div>
+    
+    <div class="filter-group">
+      <select [(ngModel)]="roleFilter" class="filter-select">
+        <option value="ALL">All Roles</option>
+        <option value="ADMIN">Admin</option>
+        <option value="SUPERVISOR">Supervisor</option>
+        <option value="TECHNICIAN">Technician</option>
+      </select>
+
+      <select [(ngModel)]="statusFilter" class="filter-select">
+        <option value="ALL">All Status</option>
+        <option value="ACTIVE">Active Only</option>
+        <option value="INACTIVE">Inactive Only</option>
+      </select>
+    </div>
+
     <span class="metric-count">{{filteredUsers.length}} result(s)</span>
   </div>
 
@@ -119,13 +136,18 @@
           <input type="password" [(ngModel)]="newUser.password" placeholder="••••••••">
         </div>
         <div class="form-group">
-          <label>Access Role <span class="required">*</span></label>
-          <select [(ngModel)]="newUser.role">
-            <option value="TECHNICIAN">Technician</option>
-            <option value="SUPERVISOR">Supervisor</option>
-            <option value="ADMIN">Administrator</option>
-          </select>
+          <label>Confirm Password {{ isEditMode && !newUser.password ? '' : '*' }}</label>
+          <input type="password" [(ngModel)]="newUser.confirmPassword" placeholder="••••••••">
         </div>
+      </div>
+
+      <div class="form-group">
+        <label>Access Role <span class="required">*</span></label>
+        <select [(ngModel)]="newUser.role">
+          <option value="TECHNICIAN">Technician</option>
+          <option value="SUPERVISOR">Supervisor</option>
+          <option value="ADMIN">Administrator</option>
+        </select>
       </div>
     </div>
 

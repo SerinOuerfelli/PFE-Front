@@ -20,6 +20,8 @@ export class UserManagementComponent implements OnInit {
   searchQuery: string = '';
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+  roleFilter: string = 'ALL';
+  statusFilter: string = 'ALL';
 
   // Modal State
   isModalOpen: boolean = false;
@@ -29,6 +31,7 @@ export class UserManagementComponent implements OnInit {
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'TECHNICIAN',
     active: true
   };
@@ -60,11 +63,20 @@ export class UserManagementComponent implements OnInit {
 
   get filteredUsers(): User[] {
     const q = this.searchQuery.toLowerCase();
-    const filtered = this.users.filter(u =>
+    let filtered = this.users.filter(u =>
       u.username.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.role.toLowerCase().includes(q)
+      u.email.toLowerCase().includes(q)
     );
+
+    if (this.roleFilter !== 'ALL') {
+      filtered = filtered.filter(u => u.role === this.roleFilter);
+    }
+
+    if (this.statusFilter !== 'ALL') {
+      const isActive = this.statusFilter === 'ACTIVE';
+      filtered = filtered.filter(u => u.active === isActive);
+    }
+
     return this.applySorting(filtered);
   }
 
@@ -152,6 +164,7 @@ export class UserManagementComponent implements OnInit {
       username: user.username,
       email: user.email.replace('@biat-it.com', ''),
       password: '', // We don't fetch passwords, so keep it empty. If they don't type a new one, don't update it.
+      confirmPassword: '',
       role: user.role,
       active: user.active
     };
@@ -168,6 +181,7 @@ export class UserManagementComponent implements OnInit {
       username: '',
       email: '',
       password: '',
+      confirmPassword: '',
       role: 'TECHNICIAN',
       active: true
     };
@@ -180,10 +194,29 @@ export class UserManagementComponent implements OnInit {
       return;
     }
 
+    // Password confirmation logic
+    if (this.newUser.password !== this.newUser.confirmPassword) {
+      Swal.fire('Wait', 'Passwords do not match!', 'warning');
+      return;
+    }
+
     // Ensure we send the full email to the service
     const userToSave = { ...this.newUser };
+    delete userToSave.confirmPassword;
+
     if (!userToSave.email.includes('@')) {
       userToSave.email = userToSave.email + '@biat-it.com';
+    }
+
+    // Check if email already exists in local list
+    const emailExists = this.users.some(u => 
+      u.email.toLowerCase() === userToSave.email.toLowerCase() && 
+      (!this.isEditMode || u.userId !== this.editingUserId)
+    );
+
+    if (emailExists) {
+      Swal.fire('Email Exists', `The email ${userToSave.email} is already assigned to another user.`, 'warning');
+      return;
     }
 
     if (this.isEditMode && this.editingUserId) {

@@ -58,7 +58,8 @@ export class ChatService {
 
   addMessage(msg: ChatMessage) {
     const current = this.messagesSubject.value;
-    const updated = [...current, msg];
+    // Keep only the last 50 messages to ensure performance and storage efficiency
+    const updated = [...current, msg].slice(-50);
     this.messagesSubject.next(updated);
     this.saveMessages(updated);
   }
@@ -75,7 +76,9 @@ export class ChatService {
       const saved = localStorage.getItem('biat_chat_history');
       if (saved) {
         try {
-          this.messagesSubject.next(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          // Ensure we don't exceed the 50-message limit on load
+          this.messagesSubject.next(parsed.slice(-50));
         } catch (e) {
           console.error('Failed to load chat history', e);
         }

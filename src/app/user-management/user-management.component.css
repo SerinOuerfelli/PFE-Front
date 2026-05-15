@@ -110,37 +110,88 @@ h2 {
   box-shadow: 0 6px 20px rgba(37,99,235,0.45);
 }
 
-/* ===== Search Bar ===== */
+/* ===== Search Bar & Filters ===== */
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 16px;
   background: var(--glass-bg);
   backdrop-filter: blur(14px);
   border: 1px solid var(--glass-border);
   border-radius: 14px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   box-shadow: var(--shadow-glass);
+  flex-wrap: wrap;
 }
 
-.search-bar input {
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
+  min-width: 200px;
+}
+
+.search-input-wrapper input {
+  width: 100%;
   background: none;
   border: none;
   outline: none;
   font-size: 14px;
   color: var(--text-main);
+  padding: 8px 0;
 }
 
-.search-bar input::placeholder { color: var(--text-muted); }
+.search-input-wrapper input::placeholder { color: var(--text-muted); }
 
-.search-icon { font-size: 16px; }
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-select {
+  background: var(--card-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%232563eb'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center;
+  background-size: 20px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid var(--border-col);
+  border-radius: 8px;
+  padding: 6px 28px 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+:host-context(.night-mode) .filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+.filter-select:hover {
+  border-color: var(--c-primary);
+  background-color: var(--card-hover);
+}
+
+.filter-select:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.search-icon { font-size: 16px; color: var(--text-muted); }
 
 .metric-count {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
+  background: var(--th-bg);
+  padding: 4px 10px;
+  border-radius: 20px;
 }
 
 /* ===== Glass Card ===== */

@@ -29,11 +29,33 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
    isDetailsOpen = false;
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+  typeFilter: string = 'ALL';
+  statusFilter: string = 'ALL';
+  cityFilter: string = 'ALL';
+  areaFilter: string = 'ALL';
   private mapMarkers: Map<number, L.CircleMarker> = new Map();
   private pollingSub?: Subscription;
 
   get selectedEquipment(): Equipment | undefined {
     return this.equipments.find(e => e.id === this.selectedEquipmentId);
+  }
+
+  get uniqueCities(): string[] {
+    return this.allEquipments
+      .map(e => e.city)
+      .filter((v, i, a) => v && a.indexOf(v) === i)
+      .sort();
+  }
+
+  get uniqueAreas(): string[] {
+    let eqs = this.allEquipments;
+    if (this.cityFilter !== 'ALL') {
+      eqs = eqs.filter(e => e.city === this.cityFilter);
+    }
+    return eqs
+      .map(e => e.area)
+      .filter((v, i, a) => v && a.indexOf(v) === i)
+      .sort();
   }
 
   private map: L.Map | undefined;
@@ -161,16 +183,45 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
 
   loadIncidents(id: number) {
     this.loadingIncidents = true;
+    const ref = this.selectedEquipment?.reference || 'Equipment';
+    
     this.equipmentService.getEquipmentIncidents(id).subscribe({
       next: (data) => {
-        this.incidents = data;
+        if (data && data.length > 0) {
+          this.incidents = data;
+          this.notifService.addNotification(`Incident event: ${data.length} issues detected for ${ref}`, 'warning');
+        } else {
+          // Add a placeholder "Healthy" event as requested
+          this.incidents = [{
+            metricName: 'System Health',
+            level: 'INFO',
+            value: 'Healthy',
+            unit: '',
+            measureDate: new Date(),
+            isPlaceholder: true
+          }];
+          this.notifService.addNotification(`Incident event: No issues detected for ${ref}`, 'success');
+        }
         this.loadingIncidents = false;
       },
       error: (err) => {
         console.error('Failed to load incidents:', err);
         this.loadingIncidents = false;
+        this.notifService.addNotification(`Failed to retrieve incident info for ${ref}`, 'error');
       }
     });
+  }
+
+  getIncidentLevelClass(level: string): string {
+    if (!level) return 'level-info';
+    const l = level.toUpperCase();
+    switch (l) {
+      case 'CRITICAL': return 'level-critical';
+      case 'ERROR': return 'level-error';
+      case 'WARNING': return 'level-warning';
+      case 'INFO': return 'level-info';
+      default: return 'level-info';
+    }
   }
 
   sortBy(column: string) {
@@ -191,6 +242,23 @@ export class EquipmentOverviewComponent implements OnInit, AfterViewInit, OnDest
       (e.area?.toLowerCase() || '').includes(q) ||
       (e.type?.toLowerCase() || '').includes(q)
     );
+
+    if (this.typeFilter !== 'ALL') {
+      filtered = filtered.filter(e => e.type === this.typeFilter);
+    }
+
+    if (this.statusFilter !== 'ALL') {
+      filtered = filtered.filter(e => e.status === this.statusFilter);
+    }
+
+    if (this.cityFilter !== 'ALL') {
+      filtered = filtered.filter(e => e.city === this.cityFilter);
+    }
+
+    if (this.areaFilter !== 'ALL') {
+      filtered = filtered.filter(e => e.area === this.areaFilter);
+    }
+
     this.equipments = this.applySorting(filtered);
   }
 

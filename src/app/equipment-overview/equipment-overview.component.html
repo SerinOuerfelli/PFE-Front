@@ -2,16 +2,44 @@
   <div class="header-section">
     <div class="header-titles">
       <h1>Equipment Overview</h1>
-      <p>Tracking DAB/TPE operational contexts geographically</p>
+      <p>Tracking ATM/EPT operational contexts geographically</p>
     </div>
 
-    <div class="header-search">
-      <span class="search-icon">🔍</span>
-      <input type="text" 
-             placeholder="Search by reference, city, or type..." 
-             [(ngModel)]="searchTerm"
-             (ngModelChange)="applyFiltersAndSorting()"
-             class="search-input" />
+    <div class="header-search-group">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" 
+               placeholder="Search by reference, city, or type..." 
+               [(ngModel)]="searchTerm"
+               (ngModelChange)="applyFiltersAndSorting()"
+               class="search-input" />
+      </div>
+
+      <div class="filter-controls">
+        <select [(ngModel)]="typeFilter" (change)="applyFiltersAndSorting()" class="filter-dropdown">
+          <option value="ALL">All Types</option>
+          <option value="ATM">ATM</option>
+          <option value="EPT">EPT</option>
+        </select>
+
+        <select [(ngModel)]="statusFilter" (change)="applyFiltersAndSorting()" class="filter-dropdown">
+          <option value="ALL">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+          <option value="MAINTENANCE">Maintenance</option>
+          <option value="OUT_OF_SERVICE">Out of Service</option>
+        </select>
+
+        <select [(ngModel)]="cityFilter" (change)="areaFilter = 'ALL'; applyFiltersAndSorting()" class="filter-dropdown">
+          <option value="ALL">All Cities</option>
+          <option *ngFor="let city of uniqueCities" [value]="city">{{ city }}</option>
+        </select>
+
+        <select [(ngModel)]="areaFilter" (change)="applyFiltersAndSorting()" class="filter-dropdown" [disabled]="cityFilter === 'ALL' && uniqueAreas.length === 0">
+          <option value="ALL">All Areas</option>
+          <option *ngFor="let area of uniqueAreas" [value]="area">{{ area }}</option>
+        </select>
+      </div>
     </div>
 
     <div class="header-toggles">
@@ -174,23 +202,32 @@
 
 
         <div class="technical-section">
-          <h3>Incident History (Pannes)</h3>
+          <h3>Incident History (Events)</h3>
           <div *ngIf="loadingIncidents" class="loading-mini">
             <div class="spinner-mini"></div>
-            <span>Loading pannes...</span>
+            <span>Scanning telemetry...</span>
           </div>
-          <div *ngIf="!loadingIncidents && incidents.length === 0" class="empty-state-mini">
-            No incidents recorded for this equipment.
-          </div>
-          <div class="incidents-list" *ngIf="!loadingIncidents && incidents.length > 0">
-            <div class="incident-card" *ngFor="let incident of incidents">
+          
+          <div class="incidents-list" *ngIf="!loadingIncidents">
+            <div class="incident-card" 
+                 *ngFor="let incident of incidents"
+                 [class.placeholder-event]="incident.isPlaceholder"
+                 [class.critical-border]="incident.level === 'CRITICAL'">
+              
               <div class="incident-header">
-                <span class="incident-metric">{{ incident.metricName }}</span>
-                <span class="badge status-out-of-service">{{ incident.level }}</span>
+                <span class="incident-metric">
+                  <i class="fas" [ngClass]="incident.isPlaceholder ? 'fa-check-shield' : 'fa-sensor'"></i>
+                  {{ incident.metricName }}
+                </span>
+                <span class="badge" [ngClass]="getIncidentLevelClass(incident.level)">
+                  {{ incident.level }}
+                </span>
               </div>
+              
               <div class="incident-details">
-                <span>Value: {{ incident.value }} {{ incident.unit }}</span>
-                <span class="incident-date">{{ incident.measureDate | date:'short' }}</span>
+                <span *ngIf="!incident.isPlaceholder">Value: <strong>{{ incident.value }} {{ incident.unit }}</strong></span>
+                <span *ngIf="incident.isPlaceholder" class="success-text">All sensors reporting normal values.</span>
+                <span class="incident-date">{{ incident.measureDate | date:'mediumTime' }}</span>
               </div>
             </div>
           </div>
