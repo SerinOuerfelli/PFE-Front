@@ -10,14 +10,14 @@
   --card-bg:      rgba(248,250,252,0.9);
   --card-hover:   #ffffff;
   --shadow-glass: 0 4px 24px rgba(31,38,135,0.06);
-  --shadow-hover: 0 8px 32px rgba(99,102,241,0.14);
+  --shadow-hover: 0 8px 32px rgba(0,150,199,0.14);
 
-  --c-primary:  #6366f1;
+  --c-primary:  #0096c7;
   --c-green:    #10b981;
   --c-red:      #f43f5e;
   --c-amber:    #f59e0b;
-  --row-hover:  rgba(99,102,241,0.04);
-  --th-bg:      rgba(99,102,241,0.06);
+  --row-hover:  rgba(0,150,199,0.04);
+  --th-bg:      rgba(0,150,199,0.06);
 }
 
 :host-context(.night-mode) {
@@ -29,9 +29,9 @@
   --card-bg:      rgba(15,23,42,0.55);
   --card-hover:   rgba(30,41,59,0.85);
   --shadow-glass: 0 4px 24px rgba(0,0,0,0.4);
-  --shadow-hover: 0 8px 32px rgba(99,102,241,0.2);
-  --row-hover:    rgba(99,102,241,0.07);
-  --th-bg:        rgba(99,102,241,0.1);
+  --shadow-hover: 0 8px 32px rgba(0,150,199,0.25);
+  --row-hover:    rgba(0,150,199,0.07);
+  --th-bg:        rgba(0,150,199,0.1);
 }
 
 /* ===== Wrapper ===== */
@@ -74,7 +74,7 @@ h2 {
   font-size: 26px;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(135deg, #6366f1, #0ea5e9);
+  background: linear-gradient(135deg, #0096c7, #00e5ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -91,19 +91,19 @@ h2 {
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #6366f1, #818cf8);
+  background: linear-gradient(135deg, #0096c7, #00e5ff);
   color: #fff;
   border: none;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+  box-shadow: 0 4px 14px rgba(0,150,199,0.35);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.45);
+  box-shadow: 0 6px 20px rgba(0,150,199,0.45);
 }
 
 /* ===== Search Bar ===== */
@@ -227,7 +227,7 @@ td {
 .value-badge {
   display: inline-block;
   padding: 3px 10px;
-  background: rgba(99,102,241,0.12);
+  background: rgba(0,150,199,0.12);
   color: var(--c-primary);
   border-radius: 20px;
   font-family: 'Outfit', sans-serif;
@@ -272,10 +272,10 @@ td {
 }
 
 .btn-edit {
-  background: rgba(99,102,241,0.1);
+  background: rgba(0,150,199,0.1);
 }
 .btn-edit:hover {
-  background: rgba(99,102,241,0.2);
+  background: rgba(0,150,199,0.2);
   transform: scale(1.1);
 }
 
@@ -405,7 +405,7 @@ input[type="number"] {
 
 input:focus {
   border-color: var(--c-primary);
-  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+  box-shadow: 0 0 0 3px rgba(0,150,199,0.12);
 }
 
 /* ===== Modal Footer ===== */
@@ -432,17 +432,17 @@ input:focus {
 
 .btn-save {
   padding: 9px 22px;
-  background: linear-gradient(135deg, #6366f1, #818cf8);
+  background: linear-gradient(135deg, #0096c7, #00e5ff);
   color: #fff;
   border: none;
   border-radius: 10px;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+  box-shadow: 0 4px 12px rgba(0,150,199,0.3);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99,102,241,0.4); }
+.btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,150,199,0.4); }
 
 .btn-danger {
   padding: 9px 22px;

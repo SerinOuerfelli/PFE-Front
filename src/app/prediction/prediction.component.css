@@ -38,9 +38,9 @@
   --status-critical-text: #c2410c;
   --status-critical-dot: #f97316;
 
-  --status-failure-bg: #faf5ff;
-  --status-failure-text: #7e22ce;
-  --status-failure-dot: #a855f7;
+  --status-failure-bg: #e6fcff;
+  --status-failure-text: #0083a0;
+  --status-failure-dot: #00e5ff;
   
   --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
   --shadow-hover: 0 12px 40px 0 rgba(37, 99, 235, 0.15);
@@ -89,8 +89,8 @@
   --status-critical-bg: rgba(194, 65, 12, 0.25);
   --status-critical-text: #fdba74;
 
-  --status-failure-bg: rgba(126, 34, 206, 0.25);
-  --status-failure-text: #d8b4fe;
+  --status-failure-bg: rgba(0, 150, 199, 0.25);
+  --status-failure-text: #a6f5ff;
 
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   --shadow-hover: 0 12px 40px 0 rgba(59, 130, 246, 0.2);

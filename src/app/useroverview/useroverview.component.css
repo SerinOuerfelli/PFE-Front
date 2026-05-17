@@ -14,8 +14,8 @@
   --shadow-glass: 0 4px 24px rgba(31, 38, 135, 0.06);
   --shadow-hover: 0 8px 32px rgba(37, 99, 235, 0.14);
 
-  --c-blue: #6366f1;
-  --c-indigo: #818cf8;
+  --c-blue: #0096c7;
+  --c-indigo: #00e5ff;
   --c-green: #10b981;
   --c-teal: #0ea5e9;
   --c-red: #f43f5e;
@@ -68,7 +68,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #6366f1, #818cf8);
+  background: linear-gradient(135deg, #0096c7, #00e5ff);
   color: #fff;
   font-size: 11px;
   font-weight: 800;
@@ -96,7 +96,7 @@ h2 {
   font-size: 26px;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(135deg, #6366f1 0%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #0096c7 0%, #00e5ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
@@ -115,26 +115,26 @@ h2 {
   gap: 10px;
   padding: 12px 24px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #0096c7 0%, #00e5ff 100%);
   color: white;
   font-weight: 700;
   font-size: 14px;
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 15px rgba(0, 150, 199, 0.35);
   font-family: 'Outfit', sans-serif;
 }
 
 .download-report-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45);
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  box-shadow: 0 8px 25px rgba(0, 150, 199, 0.45);
+  background: linear-gradient(135deg, #0077b6 0%, #0096c7 100%);
 }
 
 .download-report-btn:active:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 150, 199, 0.3);
 }
 
 .download-report-btn:disabled {
@@ -247,7 +247,7 @@ h2 {
 
 .glass-card:hover {
   box-shadow: var(--shadow-hover);
-  border-color: rgba(99, 102, 241, 0.35);
+  border-color: rgba(0, 150, 199, 0.35);
 }
 
 .chart-card {

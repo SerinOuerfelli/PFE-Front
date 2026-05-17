@@ -114,12 +114,12 @@ export class UserOverviewComponent implements OnInit {
         datasets: [{
           label: 'Transactions / Day',
           data: values,
-          borderColor: '#6366f1',
-          backgroundColor: isNight ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.1)',
+          borderColor: '#0096c7',
+          backgroundColor: isNight ? 'rgba(0,150,199,0.15)' : 'rgba(0,150,199,0.1)',
           fill: true,
           tension: 0.45,
           pointRadius: 5,
-          pointBackgroundColor: '#6366f1',
+          pointBackgroundColor: '#0096c7',
           pointHoverRadius: 8
         }]
       },
@@ -156,7 +156,7 @@ export class UserOverviewComponent implements OnInit {
         labels,
         datasets: [{
           data: values,
-          backgroundColor: ['#6366f1', '#0ea5e9', '#f59e0b'],
+          backgroundColor: ['#0096c7', '#00e5ff', '#f59e0b'],
           borderWidth: 2,
           borderColor: isNight ? '#1e293b' : '#ffffff',
           hoverOffset: 12
@@ -187,7 +187,7 @@ export class UserOverviewComponent implements OnInit {
         labels,
         datasets: [{
           data: values,
-          backgroundColor: ['#f43f5e', '#f59e0b', '#6366f1', '#10b981'],
+          backgroundColor: ['#f43f5e', '#f59e0b', '#0096c7', '#10b981'],
           borderWidth: 2,
           borderColor: isNight ? '#1e293b' : '#ffffff',
           hoverOffset: 12
@@ -221,8 +221,8 @@ export class UserOverviewComponent implements OnInit {
         datasets: [{
           label: 'Transactions',
           data: values,
-          backgroundColor: 'rgba(99,102,241,0.75)',
-          borderColor: '#6366f1',
+          backgroundColor: 'rgba(0,150,199,0.75)',
+          borderColor: '#0096c7',
           borderWidth: 1.5,
           borderRadius: 8,
           borderSkipped: false
@@ -262,7 +262,7 @@ export class UserOverviewComponent implements OnInit {
       this.kpis.FraudSuspicionRate,
       this.kpis.NormalRate
     ];
-    const colors = ['#f43f5e', '#10b981', '#6366f1', '#ef4444', '#f59e0b', '#0ea5e9'];
+    const colors = ['#f43f5e', '#10b981', '#0096c7', '#ef4444', '#f59e0b', '#00e5ff'];
 
     new Chart(canvas, {
       type: 'bar',

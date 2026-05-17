@@ -425,7 +425,7 @@ body {
 }
 
 .retrain-btn {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #0096c7 0%, #00e5ff 100%);
   color: white;
   border: none;
   padding: 8px 18px;
@@ -437,12 +437,12 @@ body {
   align-items: center;
   gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 150, 199, 0.35);
 }
 
 .retrain-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 150, 199, 0.45);
 }
 
 .retrain-btn:disabled {
@@ -454,7 +454,7 @@ body {
 .retrain-status {
   font-size: 12px;
   font-weight: 500;
-  color: #6366f1;
+  color: #0096c7;
   animation: fadeIn 0.3s ease;
 }
 
@@ -464,6 +464,6 @@ body {
 }
 
 .night-mode .retrain-status {
-  color: #a855f7;
+  color: #00e5ff;
 }
 
