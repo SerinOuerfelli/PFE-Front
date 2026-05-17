@@ -34,14 +34,14 @@ export class LoginComponent {
     };
 
     this.clipRemoved = true;
-    this.animateOut = true;
 
     this.authService.login(loginRequest).subscribe({
       next: (response) => {
         this.authService.saveAuthData(response);
+        this.animateOut = true; // Trigger fade-out only after backend success
         setTimeout(() => {
           this.router.navigate(['/qrcode']);
-        }, 800);
+        }, 380); // Snappy 300ms page handoff
       },
       error: (err) => {
         this.clipRemoved = false;
@@ -214,4 +214,4 @@ export class LoginComponent {
       }
     });
   }
-}
+}

@@ -19,6 +19,8 @@ export class QrcodeComponent implements OnInit {
   qrData: string = '';
   email: string = '';
   secret: string = '';
+  animateOut: boolean = false;
+  showQR: boolean = false;
 
   // 6-digit code storage
   codeDigits: string[] = ["", "", "", "", "", ""];
@@ -56,19 +58,20 @@ export class QrcodeComponent implements OnInit {
     if (this.email && this.code.length === 6) {
       this.twoFactorAuthService.verifyCode(this.email, this.code).subscribe({
         next: () => {
+          this.animateOut = true;
           const role = localStorage.getItem('role');
 
-          if (role === 'SUPERVISOR') {
-            this.router.navigate(['/supervisor-dashboard']);
-          } else if (role === 'TECHNICIAN') {
-            this.router.navigate(['/technician-dashboard']);
-          } else if (role === 'ADMIN') {
-            this.router.navigate(['/admin-dashboard']);
-          }
-
-          else {
-            this.router.navigate(['/login-dashboard']);
-          }
+          setTimeout(() => {
+            if (role === 'SUPERVISOR') {
+              this.router.navigate(['/supervisor-dashboard']);
+            } else if (role === 'TECHNICIAN') {
+              this.router.navigate(['/technician-dashboard']);
+            } else if (role === 'ADMIN') {
+              this.router.navigate(['/admin-dashboard']);
+            } else {
+              this.router.navigate(['/login-dashboard']);
+            }
+          }, 600);
         },
         error: (err) => {
           console.log(err);
@@ -281,4 +284,4 @@ export class QrcodeComponent implements OnInit {
       }
     });
   }
-}
+}

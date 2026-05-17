@@ -1,44 +1,137 @@
 /* You can add global styles to this file, and also import other style files */
 @import "leaflet/dist/leaflet.css";
 
-/* SweetAlert2 custom dark glass theme */
-.swal2-popup.swal2-dark-glass {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 16px !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  font-family: 'Roboto', sans-serif;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+/* Global Reset to eliminate browser gutters and unwanted scrollbars */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
-.swal2-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  font-family: 'Roboto', sans-serif; 
+
+*, *::before, *::after {
+  box-sizing: inherit;
 }
-.swal2-confirm {
-  background: linear-gradient(135deg, #19427e, #2596be) !important;
-  color: #fff !important;
-  border: none !important;
-  border-radius: 8px !important;
-  padding: 0.75rem 1.8rem !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  font-family: 'Roboto', sans-serif;
-  box-shadow: 0 4px 15px rgba(37, 150, 190, 0.3) !important;
+
+/* ==================================================== */
+/* SweetAlert2 Global Glass Theme (Light & Dark Support) */
+/* ==================================================== */
+
+/* Base Styles (Shapes, Transitions, Blurs) */
+.swal2-popup {
+  border-radius: 20px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  font-family: 'Roboto', 'Inter', sans-serif !important;
   transition: all 0.3s ease !important;
 }
+
+.swal2-confirm {
+  background: linear-gradient(135deg, #3b82f6, #0ea5e9) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 2rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4) !important;
+  transition: all 0.3s ease !important;
+}
+
 .swal2-confirm:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 150, 190, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.6) !important;
 }
-.swal2-icon.swal2-error {
-  border-color: #ff4b4b !important;
-  color: #ff4b4b !important;
+
+.swal2-input, .swal2-textarea, .swal2-select {
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
 }
-.swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
-  background-color: #ff4b4b !important;
+
+.swal2-icon.swal2-error { border-color: #ef4444 !important; color: #ef4444 !important; }
+.swal2-icon.swal2-error [class^='swal2-x-mark-line'] { background-color: #ef4444 !important; }
+.swal2-icon.swal2-success { border-color: #10b981 !important; color: #10b981 !important; }
+.swal2-icon.swal2-success [class^='swal2-success-line'] { background-color: #10b981 !important; }
+.swal2-icon.swal2-success .swal2-success-ring { border-color: rgba(16, 185, 129, 0.3) !important; }
+.swal2-icon.swal2-warning { border-color: #f59e0b !important; color: #f59e0b !important; }
+.swal2-icon.swal2-info { border-color: #3b82f6 !important; color: #3b82f6 !important; }
+
+/* === NIGHT MODE SWEETALERT === */
+body.night-mode .swal2-popup {
+  background: rgba(15, 30, 45, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
 }
+body.night-mode .swal2-title { color: #bae6fd !important; }
+body.night-mode .swal2-html-container { color: #e2e8f0 !important; }
+body.night-mode .swal2-cancel {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 2rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(5px) !important;
+  transition: all 0.3s ease !important;
+}
+body.night-mode .swal2-cancel:hover { background: rgba(255, 255, 255, 0.2) !important; color: #fff !important; }
+body.night-mode .swal2-input, body.night-mode .swal2-textarea, body.night-mode .swal2-select {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
+body.night-mode .swal2-input:focus, body.night-mode .swal2-textarea:focus, body.night-mode .swal2-select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+body.night-mode.swal2-shown > .swal2-container {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* === LIGHT MODE SWEETALERT === */
+body.light-mode .swal2-popup, body:not(.night-mode) .swal2-popup {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 25px 50px rgba(31, 38, 135, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  color: #1e293b !important;
+}
+body.light-mode .swal2-title, body:not(.night-mode) .swal2-title { color: #0f172a !important; font-weight: 700 !important; }
+body.light-mode .swal2-html-container, body:not(.night-mode) .swal2-html-container { color: #334155 !important; }
+body.light-mode .swal2-cancel, body:not(.night-mode) .swal2-cancel {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #475569 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 2rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(5px) !important;
+  transition: all 0.3s ease !important;
+}
+body.light-mode .swal2-cancel:hover, body:not(.night-mode) .swal2-cancel:hover { background: rgba(0, 0, 0, 0.1) !important; color: #1e293b !important; }
+body.light-mode .swal2-input, body.light-mode .swal2-textarea, body.light-mode .swal2-select,
+body:not(.night-mode) .swal2-input, body:not(.night-mode) .swal2-textarea, body:not(.night-mode) .swal2-select {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+body.light-mode .swal2-input:focus, body.light-mode .swal2-textarea:focus, body.light-mode .swal2-select:focus,
+body:not(.night-mode) .swal2-input:focus, body:not(.night-mode) .swal2-textarea:focus, body:not(.night-mode) .swal2-select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+body.light-mode.swal2-shown > .swal2-container, body:not(.night-mode).swal2-shown > .swal2-container {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* ==================================================== */
 
 /* Global Theme Variables for Scrollbar */
 :root {
@@ -85,4 +178,3 @@
 html {
   scroll-behavior: smooth;
 }
-

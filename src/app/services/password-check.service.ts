@@ -32,10 +32,8 @@ export class PasswordCheckService {
       customClass: {
         popup: 'swal2-dark-glass'
       }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.promptNewPassword(userId);
-      }
+    }).then(() => {
+      this.promptNewPassword(userId);
     });
   }
 
@@ -116,7 +114,9 @@ export class PasswordCheckService {
               timer: 2000,
               showConfirmButton: false,
               background: 'rgba(15, 30, 45, 0.95)',
-              color: '#ffffff'
+              color: '#ffffff',
+              allowOutsideClick: false,
+              allowEscapeKey: false
             });
           },
           error: (err) => {
@@ -125,6 +125,8 @@ export class PasswordCheckService {
               title: 'Update Failed',
               text: err.error || 'The current password you entered is incorrect.',
               confirmButtonText: 'Try Again',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
               background: 'rgba(15, 30, 45, 0.95)',
               color: '#ffffff'
             }).then(() => this.promptNewPassword(userId));

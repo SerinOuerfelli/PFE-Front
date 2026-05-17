@@ -1,38 +1,86 @@
-<div class="auth-container">
+<div class="corporate-login-wrapper" [class.fade-out]="animateOut">
+  
   <!-- Top Corner Return Button -->
   <button class="btn-corner-return" (click)="goBack()" title="Back to Login">
     <span>←</span>
   </button>
 
-  <!-- Left QR section -->
-  <div class="welcome-section">
-    <qrcode *ngIf="qrData" [qrdata]="qrData" [width]="220" [errorCorrectionLevel]="'M'"></qrcode>
-    <div *ngIf="!qrData" class="qr-placeholder">
-      <div class="spinner"></div>
-      <p>Generating secure QR...</p>
+  <!-- Left Panel: Full Screen Background Branding -->
+  <div class="brand-panel">
+    <div class="brand-overlay"></div>
+    <div class="brand-content">
+      <img src="/assets/biatit.jpg" alt="BIAT Logo" class="brand-logo" />
+      <h1 class="brand-title">Smart Monitor</h1>
+      <p class="brand-subtitle">Secure AIoT Equipment Monitoring Platform</p>
     </div>
-    <p>Scan the code or enter verification below</p>
+    <div class="brand-footer">
+      <p>&copy; 2026 Banque Internationale Arabe de Tunisie</p>
+    </div>
   </div>
 
-  <!-- Right verification section -->
-  <div class="form-section">
-    <div class="box">
-      <h2>Two-Factor Auth</h2>
-
-      <div class="code-inputs">
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[0]" (input)="moveFocus($event,0)" autofocus />
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[1]" (input)="moveFocus($event,1)" />
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[2]" (input)="moveFocus($event,2)" />
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[3]" (input)="moveFocus($event,3)" />
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[4]" (input)="moveFocus($event,4)" />
-        <input type="text" maxlength="1" [(ngModel)]="codeDigits[5]" (input)="moveFocus($event,5)" />
-      </div>
-
-      <button (click)="verify()">Verify Secure Login</button>
+  <!-- Right Panel overlapping with a perfect drop-shadow diagonal clip -->
+  <div class="auth-panel-wrapper">
+    <div class="auth-panel">
       
-      <div class="help-links">
-        Having trouble? <span (click)="onNeedHelp()">Need Help?</span>
+      <!-- Decorative Background Triangles -->
+      <div class="bg-triangle shape-1"></div>
+      <div class="bg-triangle shape-2"></div>
+      <div class="bg-triangle shape-3"></div>
+
+      <!-- Verification Card -->
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2>Verification</h2>
+          <p>Scan the code and enter the 6-digit verification code below.</p>
+        </div>
+
+        <div class="auth-form">
+          <div class="form-group">
+            <label>Security Code</label>
+            <div class="code-inputs">
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[0]" (input)="moveFocus($event, 0)" autofocus />
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[1]" (input)="moveFocus($event, 1)" />
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[2]" (input)="moveFocus($event, 2)" />
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[3]" (input)="moveFocus($event, 3)" />
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[4]" (input)="moveFocus($event, 4)" />
+              <input type="text" maxlength="1" [(ngModel)]="codeDigits[5]" (input)="moveFocus($event, 5)" />
+            </div>
+          </div>
+
+          <button class="btn-corporate" (click)="verify()">
+            Verify Secure Login
+          </button>
+
+          <!-- Secure Interactive QR Code Trigger placed BELOW the main button -->
+          <div class="qr-interactive-container" *ngIf="qrData">
+            <button class="btn-qr-trigger" type="button"
+                    (mouseenter)="showQR = true"
+                    (mouseleave)="showQR = false">
+              <span class="qr-trigger-icon">📷</span> Hover to Scan QR
+            </button>
+          </div>
+          
+          <div *ngIf="!qrData" class="qr-placeholder-small">
+            <div class="spinner-small"></div>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Generating secure QR...</p>
+          </div>
+
+          <div class="auth-links">
+            Having trouble? <a href="javascript:void(0)" (click)="onNeedHelp()">Need Help?</a>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
+
+  <!-- Centered Modal QR Code Floating Elements (Direct children of root) -->
+  <div class="qr-backdrop" [class.active]="showQR"></div>
+  <div class="qr-hover-dropdown" [class.active]="showQR" *ngIf="qrData">
+    <div class="qr-code-box">
+      <qrcode [qrdata]="qrData" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+    </div>
+    <p class="qr-instructions">Scan with Google Authenticator / Duo</p>
+  </div>
+
 </div>

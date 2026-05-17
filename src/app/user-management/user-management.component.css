@@ -736,3 +736,50 @@ input:focus, select:focus {
   opacity: 0.65;
   cursor: not-allowed;
 }
+
+
+/* Password Reveal on Hover */
+.password-cell {
+  min-width: 120px;
+}
+.password-reveal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  width: max-content;
+  color: #94a3b8;
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+.pwd-visible, .unlock-icon {
+  display: none;
+}
+
+.password-reveal:hover .pwd-hidden,
+.password-reveal:hover .lock-icon {
+  display: none;
+}
+
+.password-reveal:hover .pwd-visible,
+.password-reveal:hover .unlock-icon {
+  display: inline-block;
+  color: #e2e8f0;
+}
+
+.password-reveal:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.night-mode .password-reveal {
+  background: rgba(0, 0, 0, 0.2);
+}
+.night-mode .password-reveal:hover {
+  background: rgba(0, 0, 0, 0.4);
+}

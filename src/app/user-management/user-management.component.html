@@ -19,7 +19,7 @@
       <span class="search-icon">🔍</span>
       <input type="text" placeholder="Search by name or email…" [(ngModel)]="searchQuery" />
     </div>
-    
+
     <div class="filter-group">
       <select [(ngModel)]="roleFilter" class="filter-select">
         <option value="ALL">All Roles</option>
@@ -49,13 +49,16 @@
       <thead>
         <tr>
           <th (click)="sortBy('username')" class="sortable-th">
-            User <span class="sort-icon" *ngIf="sortColumn === 'username'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+            User <span class="sort-icon" *ngIf="sortColumn === 'username'">{{ sortDirection === 'asc' ? '▲' : '▼'
+              }}</span>
           </th>
           <th (click)="sortBy('email')" class="sortable-th">
-            Email Address <span class="sort-icon" *ngIf="sortColumn === 'email'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+            Email Address <span class="sort-icon" *ngIf="sortColumn === 'email'">{{ sortDirection === 'asc' ? '▲' : '▼'
+              }}</span>
           </th>
           <th (click)="sortBy('status')" class="sortable-th">
-            Status <span class="sort-icon" *ngIf="sortColumn === 'status'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+            Status <span class="sort-icon" *ngIf="sortColumn === 'status'">{{ sortDirection === 'asc' ? '▲' : '▼'
+              }}</span>
           </th>
           <th (click)="sortBy('role')" class="sortable-th">
             Role <span class="sort-icon" *ngIf="sortColumn === 'role'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
