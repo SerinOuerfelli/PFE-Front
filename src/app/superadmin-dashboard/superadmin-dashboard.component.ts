@@ -32,6 +32,7 @@ import { PasswordCheckService } from '../services/password-check.service';
 })
 export class SuperadminDashboardComponent implements OnInit, OnDestroy{
   activeItem: string = 'Equipment Overview';
+  isSidebarCollapsed = false;
   currentContent: string = 'useroverview';
   kpis: any;
 
@@ -76,6 +77,9 @@ export class SuperadminDashboardComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    this.isSidebarCollapsed = savedState === 'true';
+
     // Polling for KPIs
     this.kpiPollingSub = interval(10000)
       .pipe(
@@ -119,6 +123,11 @@ export class SuperadminDashboardComponent implements OnInit, OnDestroy{
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    localStorage.setItem('sidebarCollapsed', String(this.isSidebarCollapsed));
   }
 
   alertsDropdownOpen: boolean = false;

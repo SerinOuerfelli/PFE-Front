@@ -25,6 +25,7 @@ import { PasswordCheckService } from '../services/password-check.service';
 })
 export class UserDashboardComponent {
   activeItem: string = 'Dashboard Overview';
+  isSidebarCollapsed = false;
   currentContent: string = 'useroverview';
   kpis: any;
 
@@ -60,6 +61,9 @@ export class UserDashboardComponent {
   }
 
   ngOnInit(): void {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    this.isSidebarCollapsed = savedState === 'true';
+
     this.kpiService.getKpis().subscribe(data => {
       this.kpis = data;
     });
@@ -86,5 +90,10 @@ export class UserDashboardComponent {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    localStorage.setItem('sidebarCollapsed', String(this.isSidebarCollapsed));
   }
 }

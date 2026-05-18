@@ -3,7 +3,7 @@
   <div [class.night-mode]="themeService.nightMode$ | async" class="app-wrapper">
 
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" [class.collapsed]="isSidebarCollapsed">
       <!-- HEADER -->
       <div class="sidebar-header">
         <img src="assets/biatlogo.png" alt="BIAT Logo">
@@ -11,24 +11,27 @@
           <h3>BIAT IT</h3>
           <p class="tagline">Smart Monitoring</p>
         </div>
+        <button class="toggle-sidebar-btn" (click)="toggleSidebar()" [title]="isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'">
+          <i class="fas" [ngClass]="isSidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </button>
       </div>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-      <p class="section-title">Navigation</p>
 
       <!-- MENU -->
       <ul class="menu">
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+        <p class="section-title">Navigation</p>
+
         <li (click)="setActive('Dashboard Overview'); loadContent('useroverview')"
           [class.active]="activeItem === 'Dashboard Overview'">
-          <i class="fas fa-tachometer-alt icon"></i> Dashboard Overview
+          <i class="fas fa-tachometer-alt icon"></i> <span class="menu-text">Dashboard Overview</span>
         </li>
         <li (click)="setActive('Equipment Overview '); loadContent('Equipment Overview ')"
           [class.active]="activeItem === 'Equipment Overview '">
-          <i class="fas fa-cog icon"></i> Equipment Overview
+          <i class="fas fa-cog icon"></i> <span class="menu-text">Equipment Overview</span>
         </li>
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
-          <i class="fas fa-robot icon"></i> ChatBot
+          <i class="fas fa-robot icon"></i> <span class="menu-text">ChatBot</span>
         </li>
         
       </ul>
@@ -60,7 +63,9 @@
         </div>
 
         <hr class="sidebar-dividers">
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <button class="logout-btn" (click)="logout()">
+          <span class="menu-text">Logout</span>
+        </button>
       </div>
     </div>
 

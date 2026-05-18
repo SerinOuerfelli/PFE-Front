@@ -3,7 +3,7 @@
   <div [class.night-mode]="themeService.nightMode$ | async" class="app-wrapper">
 
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" [class.collapsed]="isSidebarCollapsed">
       <!-- HEADER -->
       <div class="sidebar-header">
         <img src="assets/biatlogo.png" alt="BIAT Logo">
@@ -11,66 +11,69 @@
           <h3>BIAT IT</h3>
           <p class="tagline">Smart Monitoring</p>
         </div>
+        <button class="toggle-sidebar-btn" (click)="toggleSidebar()" [title]="isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'">
+          <i class="fas" [ngClass]="isSidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </button>
       </div>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-      <p class="section-title">Navigation</p>
 
       <!-- MENU -->
       <ul class="menu">
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+        <p class="section-title">Navigation</p>
+
         <li (click)="setActive('Equipment Overview '); loadContent('Equipment Overview ')"
           [class.active]="activeItem === 'Equipment Overview '">
-          <i class="fas fa-cog icon"></i> Equipment Overview
+          <i class="fas fa-cog icon"></i> <span class="menu-text">Equipment Overview</span>
         </li>
         <li (click)="setActive('My Dashboard'); loadContent('useroverview')"
           [class.active]="activeItem === 'My Dashboard'">
-          <i class="fas fa-home icon"></i>Performances Dashboard
+          <i class="fas fa-home icon"></i> <span class="menu-text">Performances Dashboard</span>
         </li>
 
-        <hr class="sidebar-divider">
-        <div class="section-title">Administrative</div>
+        <hr class="sidebar-divider" *ngIf="!isSidebarCollapsed">
+        <div class="section-title" *ngIf="!isSidebarCollapsed">Administrative</div>
         
         <li (click)="setActive('User Management'); loadContent('usermanagement')"
           [class.active]="activeItem === 'User Management'">
-          <i class="fas fa-users-cog icon"></i> User Management
+          <i class="fas fa-users-cog icon"></i> <span class="menu-text">User Management</span>
         </li>
         <li (click)="setActive('Modify Metrics'); loadContent('metrics')"
           [class.active]="activeItem === 'Modify Metrics'">
-          <i class="fas fa-edit icon"></i> Modify Metrics
+          <i class="fas fa-edit icon"></i> <span class="menu-text">Modify Metrics</span>
         </li>
         <li (click)="setActive('ChatBot'); loadContent('chatbot')" [class.active]="activeItem === 'ChatBot'">
-          <i class="fas fa-robot icon"></i> ChatBot
+          <i class="fas fa-robot icon"></i> <span class="menu-text">ChatBot</span>
         </li>
        
 
 
         <li (click)="toggleAiDropdown()" [class.active]="activeItem === 'AI Results Analysis'">
           <div class="li-content">
-            <i class="fas fa-brain icon"></i> AI Results Analysis
-            <span *ngIf="unread.total > 0" class="notif-badge pulse">!</span>
+            <i class="fas fa-brain icon"></i> <span class="menu-text">AI Results Analysis</span>
+            <span *ngIf="unread.total > 0 && !isSidebarCollapsed" class="notif-badge pulse">!</span>
           </div>
-          <i class="fas fa-chevron-down dropdown-icon"></i>
+          <i class="fas fa-chevron-down dropdown-icon" *ngIf="!isSidebarCollapsed"></i>
         </li>
-        <ul class="submenu" *ngIf="aiDropdownOpen">
+        <ul class="submenu" *ngIf="aiDropdownOpen && !isSidebarCollapsed">
           <li (click)="setActive('Predictions'); loadContent('predictions')"
             [class.active]="activeItem === 'Predictions'">
             <div class="li-content">
-              <i class="fas fa-chart-line icon"></i> Predictions
+              <i class="fas fa-chart-line icon"></i> <span class="menu-text">Predictions</span>
               <span *ngIf="unread.predictions > 0" class="notif-badge">+{{ unread.predictions }}</span>
             </div>
           </li>
           <li (click)="setActive('Recommendations'); loadContent('recommendations')"
             [class.active]="activeItem === 'Recommendations'">
             <div class="li-content">
-              <i class="fas fa-lightbulb icon"></i> Recommendations
+              <i class="fas fa-lightbulb icon"></i> <span class="menu-text">Recommendations</span>
               <span *ngIf="unread.recommendations > 0" class="notif-badge">+{{ unread.recommendations }}</span>
             </div>
           </li>
           <li (click)="setActive('Decision Support'); loadContent('decision-support')"
             [class.active]="activeItem === 'Decision Support'">
             <div class="li-content">
-              <i class="fas fa-check-circle icon"></i> Decision Support
+              <i class="fas fa-check-circle icon"></i> <span class="menu-text">Decision Support</span>
               <span *ngIf="unread.decisions > 0" class="notif-badge">+{{ unread.decisions }}</span>
             </div>
           </li>
@@ -105,7 +108,9 @@
         </div>
 
         <hr class="sidebar-dividers">
-        <button class="logout-btn" (click)="logout()">Logout</button>
+        <button class="logout-btn" (click)="logout()">
+          <span class="menu-text">Logout</span>
+        </button>
       </div>
     </div>
 
